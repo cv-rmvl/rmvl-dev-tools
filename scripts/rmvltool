@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+function usage() {
+  echo "用法: $(basename $0) <command> [args...]"
+  echo "命令:"
+  echo "  create   创建一个新的 RMVL 模块"
+  echo "  update   更新 RMVL"
+  echo "  dev      开始开发 RMVL"
+  echo "  version  显示 RMVL 版本"
+}
+
+if [ -z "${RMVL_ROOT:-}" ]; then
+  echo "Error: RMVL_ROOT is not defined. Please set RMVL_ROOT to the RMVL repository root directory."
+  exit 1
+fi
+
+if [ "$#" -lt 1 ]; then
+  usage
+  exit 1
+fi
+
+command=$1
+shift
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.rmvl"
+
+case "$command" in
+  create)
+    "$script_dir/create.bash" "$@"
+    ;;
+  update)
+    "$script_dir/update.bash" "$@"
+    ;;
+  dev)
+    "$script_dir/dev.bash" "$@"
+    ;;
+  version)
+    "$script_dir/version.bash" "$@"
+    ;;
+  *)
+    echo "Unknown command: $command"
+    usage
+    exit 1
+    ;;
+esac
+
