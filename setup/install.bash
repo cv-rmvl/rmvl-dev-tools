@@ -10,7 +10,11 @@ MARKER_END="# <<< rmvl-dev-tools <<<"
 
 CONTENT="source \"$TOOLS_ROOT/setup/setup.bash\""
 
-if [ -z "${RMVL_ROOT:-}" ]; then
+if [ -n "${1:-}" ]; then
+  root_path="$1"
+  CONTENT="export RMVL_ROOT=\"$root_path\"
+$CONTENT"
+elif [ -z "${RMVL_ROOT:-}" ]; then
   echo -n "请输入 RMVL_ROOT 路径，即您本地的 rmvl 项目根目录: "
   read -r root_path
   CONTENT="export RMVL_ROOT=\"$root_path\"
@@ -26,5 +30,5 @@ else
     echo "$CONTENT"
     echo "$MARKER_END"
   } >> "$BASHRC"
-  echo -e "\033[32m完成。请重启终端或运行 'source ~/.bashrc'\033[0m"
+  source "$BASHRC"
 fi

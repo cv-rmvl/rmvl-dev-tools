@@ -3,7 +3,7 @@
 set -eu
 
 function usage() {
-  echo "用法: rmvltool dev [vscode | nvim]"
+  echo "用法: rmvl dev [vscode | nvim]"
   echo "   vscode:  在 Visual Studio Code 中打开本地 RMVL"
   echo "   nvim:    在 Neovim 中打开本地 RMVL"
 }

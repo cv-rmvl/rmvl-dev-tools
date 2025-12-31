@@ -11,7 +11,7 @@ make install
 ```
 
 > [!tip]
-> 过程中会弹出输入 `RMVL_ROOT` 的提示，请输入您本地 RMVL 仓库的绝对路径，例如 `/home/user/cv-rmvl/rmvl`，路径因人而异，请根据实际情况填写。
+> 过程中可能会弹出输入 `RMVL_ROOT` 的提示，请输入您本地 RMVL 仓库的绝对路径，例如 `/home/user/cv-rmvl/rmvl`，路径因人而异，请根据实际情况填写。
 
 ### 卸载
 
@@ -23,16 +23,16 @@ make uninstall
 
 ### 使用说明
 
-安装完成后，您可以直接通过在终端中输入 `rmvltool` 来访问这些工具。例如可以输入
+安装完成后，您可以直接通过在终端中输入 `rmvl` 来访问这些工具。例如可以输入
 
 ```bash
-rmvltool dev vscode
+rmvl dev vscode
 ```
 
 来使用 Visual Studio Code 打开 RMVL 项目。输入
 
 ```bash
-rmvltool update code
+rmvl update code
 ```
 
 来更新 RMVL 代码库。

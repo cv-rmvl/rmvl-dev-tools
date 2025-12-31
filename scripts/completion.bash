@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function _rmvltool_completion() {
+function _rmvl_completion() {
   local cur prev commands
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -20,7 +20,7 @@ function _rmvltool_completion() {
     
   case "${subcommand}" in
     update)
-      local update_opts="doc code"
+      local update_opts="tool doc code lib"
       COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
       return 0
       ;;
@@ -44,5 +44,5 @@ function _rmvltool_completion() {
   esac
 }
 
-# Register the completion function for the rmvltool command
-complete -F _rmvltool_completion rmvltool
+# Register the completion function for the rmvl command
+complete -F _rmvl_completion rmvl

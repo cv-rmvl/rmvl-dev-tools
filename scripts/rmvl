@@ -6,13 +6,13 @@ function usage() {
   echo "用法: $(basename $0) <command> [args...]"
   echo "命令:"
   echo "  create   创建一个新的 RMVL 模块"
-  echo "  update   更新 RMVL"
+  echo "  update   更新 RMVL 或 rmvl-dev-tools 工具"
   echo "  dev      开始开发 RMVL"
   echo "  version  显示 RMVL 版本"
 }
 
 if [ -z "${RMVL_ROOT:-}" ]; then
-  echo "Error: RMVL_ROOT is not defined. Please set RMVL_ROOT to the RMVL repository root directory."
+  echo -e "\033[31mRMVL_ROOT 未定义。请将 RMVL_ROOT 设置为 RMVL 仓库的根目录。\033[0m"
   exit 1
 fi
 
@@ -40,7 +40,7 @@ case "$command" in
     "$script_dir/version.bash" "$@"
     ;;
   *)
-    echo "Unknown command: $command"
+    echo "未知命令: $command"
     usage
     exit 1
     ;;

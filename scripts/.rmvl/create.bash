@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" -lt 1 ]; then
-  echo "用法: rmvltool create <module_name> [sub_module_1 [sub_module_2] ...]"
+  echo "用法: rmvl create <module_name> [sub_module_1 [sub_module_2] ...]"
   exit 1
 fi
 
