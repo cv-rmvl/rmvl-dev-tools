@@ -7,7 +7,7 @@ function _rmvl_completion() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
     
   # Top level commands
-  commands="create update dev version"
+  commands="help create update dev version"
 
   # If we are at the first argument (after rmvl)
   if [[ ${COMP_CWORD} -eq 1 ]]; then
@@ -20,21 +20,18 @@ function _rmvl_completion() {
     
   case "${subcommand}" in
     update)
-      local update_opts="tool doc code lib"
+      local update_opts="help tool doc code lib all"
       COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
       return 0
       ;;
     create)
-      COMPREPLY=()
+      local update_opts="help"
+      COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
       return 0
       ;;
     dev)
-      local dev_opts="vscode nvim"
+      local dev_opts="help vscode nvim"
       COMPREPLY=( $(compgen -W "${dev_opts}" -- ${cur}) )
-      return 0
-      ;;
-    version)
-      COMPREPLY=()
       return 0
       ;;
     *)

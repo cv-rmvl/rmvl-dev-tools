@@ -5,10 +5,11 @@ set -e
 function usage() {
   echo "用法: $(basename $0) <command> [args...]"
   echo "命令:"
-  echo "  create   创建一个新的 RMVL 模块"
-  echo "  update   更新 RMVL 或 rmvl-dev-tools 工具"
-  echo "  dev      开始开发 RMVL"
-  echo "  version  显示 RMVL 版本"
+  echo "   help     显示此帮助信息"
+  echo "   create   创建一个新的 RMVL 模块"
+  echo "   update   更新 RMVL 或 rmvl-dev-tools 工具"
+  echo "   dev      开始开发 RMVL"
+  echo "   version  显示 RMVL 版本"
 }
 
 if [ -z "${RMVL_ROOT:-}" ]; then
@@ -27,6 +28,9 @@ shift
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.rmvl"
 
 case "$command" in
+  help)
+    usage
+    ;;
   create)
     "$script_dir/create.bash" "$@"
     ;;
