@@ -16,7 +16,7 @@ fi
 
 mode=$1
 
-case "$command" in
+case "$mode" in
   help)
     usage
     ;;
