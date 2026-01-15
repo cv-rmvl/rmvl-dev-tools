@@ -32,7 +32,7 @@ rmvl help
 就能知道有那些可用的命令！对于其他功能，这里只做简短的描述，例如可以输入
 
 ```bash
-rmvl dev vscode
+rmvl dev code
 ```
 
 来使用 Visual Studio Code 打开 RMVL 项目。输入

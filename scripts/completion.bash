@@ -30,7 +30,7 @@ function _rmvl_completion() {
       return 0
       ;;
     dev)
-      local dev_opts="help vscode nvim"
+      local dev_opts="help code nvim dir"
       COMPREPLY=( $(compgen -W "${dev_opts}" -- ${cur}) )
       return 0
       ;;
