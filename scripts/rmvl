@@ -13,8 +13,8 @@ function usage() {
   echo "   version  显示 RMVL 版本"
 }
 
-if [ -z "${RMVL_ROOT:-}" ]; then
-  echo -e "\033[31mRMVL_ROOT 未定义。请将 RMVL_ROOT 设置为 RMVL 仓库的根目录。\033[0m"
+if [ -z "${RMVL_ROOT_:-}" ]; then
+  echo -e "\033[31mRMVL_ROOT_ 未定义。请将 RMVL_ROOT_ 设置为 RMVL 仓库的根目录。\033[0m"
   exit 1
 fi
 

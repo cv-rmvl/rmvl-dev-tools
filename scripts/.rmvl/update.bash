@@ -23,7 +23,7 @@ project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
 
 # 更新 rmvl-dev-tools 工具
 function update_tool() {
-  root_path=$(echo "$RMVL_ROOT")
+  root_path=$(echo "$RMVL_ROOT_")
   bash $project_dir/setup/uninstall.bash
   cd $project_dir
   git fetch origin
@@ -53,7 +53,7 @@ function update_doc() {
   git clone git@github.com:cv-rmvl/$doc_repo.git --depth 1
   doc_ws=$cur_dir/.rmvltmp/$doc_repo
 
-  cmake -S $RMVL_ROOT -B $build_ws \
+  cmake -S $RMVL_ROOT_ -B $build_ws \
     -D CMAKE_BUILD_TYPE=Release \
     -D BUILD_DOCS=ON \
     -D BUILD_EXTRA=ON \
@@ -77,7 +77,7 @@ function update_doc() {
 # 更新 RMVL 代码到最新的 master 分支
 function update_code() {
   cur_dir="$(pwd)"
-  cd $RMVL_ROOT
+  cd $RMVL_ROOT_
   git stash push -m "rmvl-dev-tools auto stash"
   git fetch origin
   git checkout master
@@ -91,7 +91,7 @@ function update_lib() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
   mkdir -p $build_ws
-  cmake -S $RMVL_ROOT -B $build_ws \
+  cmake -S $RMVL_ROOT_ -B $build_ws \
     -D CMAKE_BUILD_TYPE=Release \
     -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)

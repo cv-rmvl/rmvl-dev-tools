@@ -26,21 +26,21 @@ case "$mode" in
       echo -e "\033[31mVisual Studio Code 未安装或 'code' 命令在 PATH 中不可用。\033[0m"
       exit 1
     fi
-    code "$RMVL_ROOT"
+    code "$RMVL_ROOT_"
     ;;
   nvim)
     if ! command -v nvim &> /dev/null; then
       echo -e "\033[31mNeovim 未安装或 'nvim' 命令在 PATH 中不可用。\033[0m"
       exit 1
     fi
-    nvim "$RMVL_ROOT"
+    nvim "$RMVL_ROOT_"
     ;;
   dir)
     if ! command -v nautilus &> /dev/null; then
       echo -e "\033[31mNautilus 文件管理器未安装或 'nautilus' 命令在 PATH 中不可用。\033[0m"
       exit 1
     fi
-    nautilus "$RMVL_ROOT"
+    nautilus "$RMVL_ROOT_"
     ;;
   *)
   usage

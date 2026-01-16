@@ -12,9 +12,9 @@ CONTENT="source \"$TOOLS_ROOT/setup/setup.bash\""
 
 if [ -n "${1:-}" ]; then
   root_path="$1"
-  CONTENT="export RMVL_ROOT=\"$root_path\"
+  CONTENT="export RMVL_ROOT_=\"$root_path\"
 $CONTENT"
-elif [ -z "${RMVL_ROOT:-}" ]; then
+elif [ -z "${RMVL_ROOT_:-}" ]; then
   echo -e "请输入您本地的 rmvl 项目根目录路径，\033[33m为空则自动克隆到 ~/rmvl\033[0m"
   read -r root_path
 
@@ -26,7 +26,7 @@ elif [ -z "${RMVL_ROOT:-}" ]; then
     git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
   fi
 
-  CONTENT="export RMVL_ROOT=\"$root_path\"
+  CONTENT="export RMVL_ROOT_=\"$root_path\"
 $CONTENT"
 fi
 
