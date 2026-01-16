@@ -7,7 +7,7 @@ function _rmvl_completion() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
     
   # Top level commands
-  commands="help create update dev version"
+  commands="help create update dev remove version"
 
   # If we are at the first argument (after rmvl)
   if [[ ${COMP_CWORD} -eq 1 ]]; then
@@ -32,6 +32,11 @@ function _rmvl_completion() {
     dev)
       local dev_opts="help code nvim dir"
       COMPREPLY=( $(compgen -W "${dev_opts}" -- ${cur}) )
+      return 0
+      ;;
+    remove)
+      local remove_opts="help tool lib"
+      COMPREPLY=( $(compgen -W "${remove_opts}" -- ${cur}) )
       return 0
       ;;
     *)

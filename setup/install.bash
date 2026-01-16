@@ -16,7 +16,6 @@ if [ -n "${1:-}" ]; then
 $CONTENT"
 elif [ -z "${RMVL_ROOT:-}" ]; then
   echo -e "请输入您本地的 rmvl 项目根目录路径，\033[33m为空则自动克隆到 ~/rmvl\033[0m"
-  echo -n ">>> "
   read -r root_path
 
   if [ -z "$root_path" ]; then

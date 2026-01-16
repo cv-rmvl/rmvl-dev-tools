@@ -9,6 +9,7 @@ function usage() {
   echo "   create   创建一个新的 RMVL 模块"
   echo "   update   更新 RMVL 或 rmvl-dev-tools 工具"
   echo "   dev      开始开发 RMVL"
+  echo "   remove   移除 RMVL 组件"
   echo "   version  显示 RMVL 版本"
 }
 
@@ -39,6 +40,9 @@ case "$command" in
     ;;
   dev)
     "$script_dir/dev.bash" "$@"
+    ;;
+  remove)
+    "$script_dir/remove.bash" "$@"
     ;;
   version)
     "$script_dir/version.bash" "$@"
