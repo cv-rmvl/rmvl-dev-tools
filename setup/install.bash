@@ -41,3 +41,13 @@ else
   } >> "$BASHRC"
   source "$BASHRC"
 fi
+
+if [ -d "$TOOLS_ROOT/build" ]; then
+  rm -rf "$TOOLS_ROOT/build"
+fi
+
+cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build"
+cmake --build "$TOOLS_ROOT/build"
+for name in lpss_tool; do
+  cp "$TOOLS_ROOT/build/$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_$name"
+done

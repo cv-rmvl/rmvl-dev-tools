@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -eu
+
+function usage() {
+  echo "用法: $(basename $0) <command> [args...]"
+  echo "命令:"
+  echo "   help     显示此帮助信息"
+  echo "   create   创建一个新的依赖 lpss 的项目"
+  echo "   node     lpss 节点工具"
+  echo "   topic    lpss 话题工具"
+}
+
+command=$1
+shift
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.lpss"
+
+case "$command" in
+  help)
+    usage
+    ;;
+  create)
+    "$script_dir/create.bash" "$@"
+    ;;
+  node)
+    "$script_dir/node.bash" "$@"
+    ;;
+  topic)
+    "$script_dir/topic.bash" "$@"
+    ;;
+  *)
+    echo "未知命令: $command"
+    usage
+    exit 1
+    ;;
+esac
+

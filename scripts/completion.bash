@@ -9,13 +9,11 @@ function _rmvl_completion() {
   # Top level commands
   commands="help create update dev remove version"
 
-  # If we are at the first argument (after rmvl)
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
     return 0
   fi
 
-  # Check the subcommand (always the second word, index 1)
   local subcommand="${COMP_WORDS[1]}"
     
   case "${subcommand}" in
@@ -25,8 +23,8 @@ function _rmvl_completion() {
       return 0
       ;;
     create)
-      local update_opts="help"
-      COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
+      local create_opts="help"
+      COMPREPLY=( $(compgen -W "${create_opts}" -- ${cur}) )
       return 0
       ;;
     dev)
@@ -46,5 +44,45 @@ function _rmvl_completion() {
   esac
 }
 
-# Register the completion function for the rmvl command
-complete -F _rmvl_completion rmvl
+function _lpss_completion() {
+  local cur prev commands
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+    
+  # Top level commands
+  commands="help create node topic"
+
+  if [[ ${COMP_CWORD} -eq 1 ]]; then
+    COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+    return 0
+  fi
+
+  local subcommand="${COMP_WORDS[1]}"
+    
+  case "${subcommand}" in
+    create)
+      COMPREPLY=()
+      return 0
+      ;;
+    node)
+      local node_opts="info list"
+      COMPREPLY=( $(compgen -W "${node_opts}" -- ${cur}) )
+      return 0
+      ;;
+    topic)
+      local topic_opts="info list"
+      COMPREPLY=( $(compgen -W "${topic_opts}" -- ${cur}) )
+      return 0
+      ;;
+    *)
+      COMPREPLY=()
+      return 0
+      ;;
+  esac
+}
+
+# Register the completion function for the command
+for cmd in rmvl lpss; do
+  complete -F _${cmd}_completion $cmd
+done
