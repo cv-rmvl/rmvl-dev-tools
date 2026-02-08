@@ -22,12 +22,17 @@ function node_info() {
     exit 1
   fi
   node_name=$2
-  $cur_dir/_autogen_lpss_tool node_info "$node_name"
+  $cur_dir/_autogen_lpss_tool ni "$node_name"
 }
 
 function node_list() {
-  $cur_dir/_autogen_lpss_tool node_list
+  $cur_dir/_autogen_lpss_tool nl
 }
+
+if [ ! -f "$cur_dir/_autogen_lpss_tool" ]; then
+  echo "lpss node 工具尚未实现。敬请期待！"
+  exit 1
+fi
 
 case $mode in
   info)

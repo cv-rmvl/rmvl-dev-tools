@@ -5,12 +5,12 @@ set -e
 function usage() {
   echo "用法: $(basename $0) <command> [args...]"
   echo "命令:"
-  echo "   help     显示此帮助信息"
+  echo "   help     显示详细帮助信息"
   echo "   create   创建一个新的 RMVL 模块"
   echo "   update   更新 RMVL 或 rmvl-dev-tools 工具"
   echo "   dev      开始开发 RMVL"
   echo "   remove   移除 RMVL 组件"
-  echo "   version  显示 RMVL 版本"
+  echo "   version  显示 rmvl-dev-tools 工具版本"
 }
 
 if [ -z "${RMVL_ROOT_:-}" ]; then
@@ -30,7 +30,16 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.rmvl"
 
 case "$command" in
   help)
+    echo " ┌──────────────────────────────────────────────────────────────────────────┐"
+    echo " │ RMVL 最初是面向 RoboMaster 赛事的视觉库，现在此之上逐步完善有关基础算法、│"
+    echo " │ 机器视觉、通信的功能，旨在打造适用范围广、使用简洁、架构统一、功能强大的 │"
+    echo " │ 视觉控制一体库。本工具提供了 RMVL 相关的命令行工具，具体使用方法如下。   │"
+    echo " └──────────────────────────────────────────────────────────────────────────┘"
     usage
+    echo -e "\n更多信息请参考官方手册:"
+    echo -e "  用户手册: \033[32mhttps://cv-rmvl.github.io/\033[0m"
+    echo -e "  API 文档: \033[32mhttps://cv-rmvl.github.io/docs/2.x/\033[0m"
+    echo -e "  GitHub:   \033[32mhttps://github.com/cv-rmvl/rmvl\033[0m"
     ;;
   create)
     "$script_dir/create.bash" "$@"

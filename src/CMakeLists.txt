@@ -7,8 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(RMVL REQUIRED)
 
+add_subdirectory(rdt)
+
 rmvl_add_exe(
   lpss_tool
-  SOURCES lpss.cpp
-  DEPENDS lpss
+  SOURCES tool/info.cpp
+  DEPENDS rdt
 )

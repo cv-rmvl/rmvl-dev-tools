@@ -51,7 +51,7 @@ function _lpss_completion() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
     
   # Top level commands
-  commands="help create node topic"
+  commands="help create node topic graph viz"
 
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )

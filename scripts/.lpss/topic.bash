@@ -4,8 +4,8 @@ set -eu
 
 function usage() {
   echo "用法: lpss topic [info | list]"
-  echo "   info:    显示节点信息"
-  echo "   list:    列出所有节点"
+  echo "   info:    显示话题信息"
+  echo "   list:    列出所有话题"
 }
 
 if [ $# -lt 1 ]; then
@@ -22,12 +22,17 @@ function topic_info() {
     exit 1
   fi
   topic_name=$2
-  $cur_dir/_autogen_lpss_tool topic_info "$topic_name"
+  $cur_dir/_autogen_lpss_tool ti "$topic_name"
 }
 
 function topic_list() {
-  $cur_dir/_autogen_lpss_tool topic_list
+  $cur_dir/_autogen_lpss_tool tl
 }
+
+if [ ! -f "$cur_dir/_autogen_lpss_tool" ]; then
+  echo "lpss topic 工具尚未实现。敬请期待！"
+  exit 1
+fi
 
 case $mode in
   info)

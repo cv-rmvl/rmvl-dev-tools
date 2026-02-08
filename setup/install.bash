@@ -42,12 +42,13 @@ else
   source "$BASHRC"
 fi
 
-if [ -d "$TOOLS_ROOT/build" ]; then
-  rm -rf "$TOOLS_ROOT/build"
+if [ -d "$TOOLS_ROOT/build_tmp" ]; then
+  rm -rf "$TOOLS_ROOT/build_tmp"
 fi
 
-cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build"
-cmake --build "$TOOLS_ROOT/build"
+cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build_tmp"
+cmake --build "$TOOLS_ROOT/build_tmp"
 for name in lpss_tool; do
-  cp "$TOOLS_ROOT/build/$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_$name"
+  cp "$TOOLS_ROOT/build_tmp/$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_$name"
 done
+rm -rf "$TOOLS_ROOT/build_tmp"
