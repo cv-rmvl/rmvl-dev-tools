@@ -74,14 +74,14 @@ function update_doc() {
   cd $cur_dir
 }
 
-# 更新 RMVL 代码到最新的 master 分支
+# 更新 RMVL 代码到最新的 2.x 分支
 function update_code() {
   cur_dir="$(pwd)"
   cd $RMVL_ROOT_
   git stash push -m "rmvl-dev-tools auto stash"
   git fetch origin
-  git checkout master
-  git reset --hard origin/master
+  git checkout 2.x
+  git reset --hard origin/2.x
   cd $cur_dir
   echo -e "\033[32m更新代码完成\033[0m"
 }

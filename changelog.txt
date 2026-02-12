@@ -1,0 +1,32 @@
+1.0.2-260212
+
+- 修改 rmvl update code 强制更新的分支 origin/master 为 origin/2.x
+- 更新安装脚本，make install 安装时自动下载最新的 rmvl
+- 增加 changelog，可通过使用 rmvl version log 展示
+
+1.0.2-260209
+
+- 初步增加 LPSS 支持
+
+1.0.1-260116
+
+- RMVL_ROOT 改为 RMVL_ROOT_
+- 新增 remove 命令及其子命令 lib 和 tool
+
+1.0.1-260115
+
+- 更新 dev 子命令
+
+1.0.1-260104
+
+- 修复 dev 未绑定变量
+- 为所有命令增加 help 子命令
+
+1.0.1-260103
+
+- 更新 update tool 的 git 更新语法，改为强制更新至 origin/master
+- 执行安装时如果输入为空，则自动 clone rmvl
+
+1.0.1-251231
+
+- 首次更新，提供 rmvl 工具

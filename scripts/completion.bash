@@ -37,6 +37,11 @@ function _rmvl_completion() {
       COMPREPLY=( $(compgen -W "${remove_opts}" -- ${cur}) )
       return 0
       ;;
+    version)
+      local version_opts="log"
+      COMPREPLY=( $(compgen -W "${version_opts}" -- ${cur}) )
+      return 0
+      ;;
     *)
       COMPREPLY=()
       return 0
