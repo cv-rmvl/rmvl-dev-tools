@@ -15,10 +15,18 @@
 
 namespace rdt {
 
+//! 话题信息
+struct topic {
+    std::string name{};    //!< 话题名称
+    std::string msgtype{}; //!< 消息类型
+};
+
+//! 节点信息
 struct node {
-    std::string name{};
-    std::vector<std::string> pubs{};
-    std::vector<std::string> subs{};
+
+    std::string name{};        //!< 节点名称
+    std::vector<topic> pubs{}; //!< 发布的话题列表
+    std::vector<topic> subs{}; //!< 订阅的话题列表
 };
 
 class LpssTool : public rm::lpss::async::Node {

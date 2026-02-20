@@ -5,9 +5,9 @@ set -eu
 function usage() {
   echo "用法: rmvl update [help | tool | doc | code | lib]"
   echo "   help:    显示此帮助信息"
-  echo "   tool:    更新 rmvl-dev-tools 工具到最新版本"
+  echo "   tool:    更新 rmvl-dev-tools 工具到最新版本，将自动执行 code 步骤以确保工具使用最新的 RMVL 代码"
   echo "   doc:     执行 Doxygen 文档生成，并推送到 cv-rmvl.github.io 仓库"
-  echo "   code:    更新 RMVL 仓库至最新的 master 分支代码"
+  echo "   code:    更新 RMVL 仓库至最新的 2.x 分支代码"
   echo "   lib:     执行完整的编译安装流程以更新 RMVL 动态/静态库"
   echo "   all:     依次执行 code 和 lib 两个步骤，即更新代码并编译安装"
 }
@@ -105,6 +105,7 @@ case "$mode" in
     usage
     ;;
   tool)
+    update_code
     update_tool
     ;;
   doc)

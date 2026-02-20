@@ -10,6 +10,18 @@ MARKER_END="# <<< rmvl-dev-tools <<<"
 
 CONTENT="source \"$TOOLS_ROOT/setup/setup.bash\""
 
+if command -v zenity &> /dev/null; then
+  password=$(zenity --password --title="rmvl 安装" --text="请输入本机密码以继续安装：" 2>/dev/null || true)
+else
+  echo "请输入本机密码以继续安装:"
+  read -s -r password
+fi
+
+if [ -z "$password" ]; then
+  echo -e "\n\033[31m未输入密码，无法继续安装。\033[0m"
+  exit 1
+fi
+
 if [ -n "${1:-}" ]; then
   root_path="$1"
   CONTENT="export RMVL_ROOT_=\"$root_path\"
@@ -50,11 +62,11 @@ fi
 echo -e "\033[32m正在自动构建 rmvl...\033[0m"
 cur_dir="$(pwd)"
 build_ws=$cur_dir/.rmvltmp/rmvl/build
-mkdir -p $build_ws
-cmake -S $root_path -B $build_ws -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
-cmake --build $build_ws -j$(nproc)
-sudo cmake --install $build_ws
-rm -rf $cur_dir/.rmvltmp
+mkdir -p "$build_ws"
+cmake -S "$root_path" -B "$build_ws" -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
+cmake --build "$build_ws" -j$(nproc)
+echo "$password" | sudo -S -p '' cmake --install "$build_ws"
+rm -rf "$cur_dir/.rmvltmp"
 unset cur_dir build_ws
 
 if [ -d "$TOOLS_ROOT/build_tmp" ]; then

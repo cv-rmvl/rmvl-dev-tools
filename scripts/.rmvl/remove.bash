@@ -21,7 +21,7 @@ project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
 function remove_tool() {
   RMVL_ROOT_=$RMVL_ROOT_
   bash $project_dir/setup/uninstall.bash
-  echo -e "\033[32mrmvl-dev-tools 工具已被移除\033[0m"
+  echo -e "\033[32mrmvl-dev-tools 工具已被移除，重启终端后生效\033[0m"
   echo -e "\033[33m注意: RMVL 仓库代码仍保留在 $RMVL_ROOT_，如需移除请执行以下命令手动删除该目录。\033[0m"
   echo -e "\nrm -rf $RMVL_ROOT_"
 }

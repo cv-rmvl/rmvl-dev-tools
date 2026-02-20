@@ -26,30 +26,30 @@ std::vector<node> LpssTool::info() const {
         return nullptr;
     };
 
-    for (const auto &[topic_name, writers] : _discovered_writers) {
+    for (const auto &[topic_name, writer_storage] : _discovered_writers) {
         auto rit = _discovered_readers.find(topic_name);
-        for (const auto &writer_guid : writers) {
+        for (const auto &writer_guid : writer_storage.writers) {
             auto *from_nd = find_node(writer_guid);
             if (!from_nd)
                 continue;
-            from_nd->pubs.push_back(topic_name);
+            from_nd->pubs.emplace_back(topic_name, std::string(writer_storage.msgtype));
             if (rit != _discovered_readers.end())
-                for (const auto &[reader_guid, locator] : rit->second) {
+                for (const auto &[reader_guid, locator] : rit->second.readers) {
                     auto *to_nd = find_node(reader_guid);
                     if (to_nd)
-                        to_nd->subs.push_back(topic_name);
+                        to_nd->subs.emplace_back(topic_name, std::string(writer_storage.msgtype));
                 }
         }
     }
 
-    for (const auto &[topic_name, readers] : _discovered_readers) {
+    for (const auto &[topic_name, reader_storage] : _discovered_readers) {
         if (_discovered_writers.count(topic_name))
             continue;
-        for (const auto &[reader_guid, locator] : readers) {
+        for (const auto &[reader_guid, locator] : reader_storage.readers) {
             auto *to_nd = find_node(reader_guid);
             if (!to_nd)
                 continue;
-            to_nd->subs.push_back(topic_name);
+            to_nd->subs.emplace_back(topic_name, std::string(reader_storage.msgtype));
         }
     }
 

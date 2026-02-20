@@ -1,4 +1,5 @@
 #include "rdt/rdt.hpp"
+#include <string>
 
 using namespace rm;
 using namespace std::literals;
@@ -21,21 +22,21 @@ static void print_info(int argc, char *argv[], const rdt::LpssTool &nd) {
             if (n.name != target)
                 continue;
 
-            printf("%s\n", n.name.c_str());
+            printf("Node: %s\n", n.name.c_str());
 
-            printf("  Publishers:\n");
+            printf("\nPublishers:\n");
             if (n.pubs.empty())
-                printf("    (none)\n");
+                printf("  (none)\n");
             else
-                for (const auto &name : n.pubs)
-                    printf("    %s\n", name.c_str());
+                for (const auto &topic : n.pubs)
+                    printf("  %s\n", topic.name.c_str());
 
-            printf("\n  Subscribers:\n");
+            printf("\nSubscribers:\n");
             if (n.subs.empty())
-                printf("    (none)\n");
+                printf("  (none)\n");
             else
-                for (const auto &name : n.subs)
-                    printf("    %s\n", name.c_str());
+                for (const auto &topic : n.subs)
+                    printf("  %s\n", topic.name.c_str());
             return;
         }
         return;
@@ -45,14 +46,22 @@ static void print_info(int argc, char *argv[], const rdt::LpssTool &nd) {
         std::string target = argv[2];
 
         auto graph = nd.info();
+        std::string msgtype{};
+
         std::vector<std::string> publishers, subscribers;
         for (const auto &n : graph) {
             for (const auto &t : n.pubs)
-                if (t == target)
+                if (t.name == target) {
                     publishers.push_back(n.name);
+                    if (msgtype.empty())
+                        msgtype = t.msgtype;
+                }
             for (const auto &t : n.subs)
-                if (t == target)
+                if (t.name == target) {
                     subscribers.push_back(n.name);
+                    if (msgtype.empty())
+                        msgtype = t.msgtype;
+                }
         }
 
         if (publishers.empty() && subscribers.empty()) {
@@ -60,21 +69,20 @@ static void print_info(int argc, char *argv[], const rdt::LpssTool &nd) {
             return;
         }
 
-        printf("Topic: %s\n", target.c_str());
-
-        printf("  Publishers:\n");
+        printf("Type: %s\n", msgtype.c_str());
+        printf("\nPublishers:\n");
         if (publishers.empty())
-            printf("    (none)\n");
+            printf("  (none)\n");
         else
             for (const auto &name : publishers)
-                printf("    %s\n", name.c_str());
+                printf("  %s\n", name.c_str());
 
-        printf("\n  Subscribers:\n");
+        printf("\nSubscribers:\n");
         if (subscribers.empty())
-            printf("    (none)\n");
+            printf("  (none)\n");
         else
             for (const auto &name : subscribers)
-                printf("    %s\n", name.c_str());
+                printf("  %s\n", name.c_str());
     }
 }
 
