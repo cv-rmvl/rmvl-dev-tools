@@ -3,6 +3,7 @@
 - 完成 lpss 话题、节点命令行工具的开发
 - update tool 时将自动执行 update code 步骤
 - 增加 SSH 环境下的支持
+- rmvl update lib 增加 debug 和 release 两个选项
 
 1.0.2-260212
 

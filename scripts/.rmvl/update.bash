@@ -91,7 +91,23 @@ function update_lib() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
   mkdir -p $build_ws
-  cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
+
+  # 判断是 debug 还是 release 模式
+  if [ $# -ne 2 ]; then
+    echo "用法: rmvl update lib <mode>"
+    echo "   mode:  模式名称，包括 release 和 debug"
+    exit 1
+  fi
+  if [ "$2" == "release" ]; then
+    build_type="Release"
+  elif [ "$2" == "debug" ]; then
+    build_type="Debug"
+  else
+    echo "无效的模式: $2"
+    echo "请使用 release 或 debug"
+    exit 1
+  fi
+  cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=$build_type -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)
   sudo cmake --install $build_ws
   rm -rf $cur_dir/.rmvltmp
@@ -113,11 +129,11 @@ case "$mode" in
     update_code
     ;;
   lib)
-    update_lib
+    update_lib "$@"
     ;;
   all)
     update_code
-    update_lib
+    update_lib release
     ;;
   *)
     usage

@@ -19,8 +19,15 @@ function _rmvl_completion() {
   case "${subcommand}" in
     update)
       local update_opts="help tool doc code lib all"
-      COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
-      return 0
+      if [[ ${COMP_CWORD} -eq 2 ]]; then
+        COMPREPLY=( $(compgen -W "${update_opts}" -- ${cur}) )
+        return 0
+      fi
+      if [[ ${COMP_CWORD} -eq 3 && "${COMP_WORDS[2]}" == "lib" ]]; then
+        local lib_opts="debug release"
+        COMPREPLY=( $(compgen -W "${lib_opts}" -- ${cur}) )
+        return 0
+      fi
       ;;
     create)
       local create_opts="help"
