@@ -91,9 +91,7 @@ function update_lib() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
   mkdir -p $build_ws
-  cmake -S $RMVL_ROOT_ -B $build_ws \
-    -D CMAKE_BUILD_TYPE=Release \
-    -D BUILD_EXTRA=ON
+  cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)
   sudo cmake --install $build_ws
   rm -rf $cur_dir/.rmvltmp
