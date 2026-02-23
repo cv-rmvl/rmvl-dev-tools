@@ -1,5 +1,3 @@
-#include <unordered_set>
-
 #include "rdt/rdt.hpp"
 
 using namespace rm;
@@ -63,13 +61,13 @@ std::vector<std::string> LpssTool::nodes() const {
     return res;
 }
 
-std::vector<std::string> LpssTool::topics() const {
-    std::unordered_set<std::string> topic_set;
-    for (const auto &[topic_name, _] : _discovered_writers)
-        topic_set.insert(topic_name);
-    for (const auto &[topic_name, _] : _discovered_readers)
-        topic_set.insert(topic_name);
-    return {topic_set.begin(), topic_set.end()};
+std::unordered_map<std::string, std::string> LpssTool::topics() const {
+    std::unordered_map<std::string, std::string> result;
+    for (const auto &[topic_name, writer_storage] : _discovered_writers)
+        result.emplace(topic_name, std::string(writer_storage.msgtype));
+    for (const auto &[topic_name, reader_storage] : _discovered_readers)
+        result.emplace(topic_name, std::string(reader_storage.msgtype));
+    return result;
 }
 
 } // namespace rdt

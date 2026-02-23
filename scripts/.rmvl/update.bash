@@ -26,9 +26,8 @@ function update_tool() {
   root_path=$(echo "$RMVL_ROOT_")
   bash $project_dir/setup/uninstall.bash
   cd $project_dir
-  git fetch origin
   git checkout master
-  git reset --hard origin/master
+  git pull origin master
   bash $project_dir/setup/install.bash "$root_path"
   source "$HOME/.bashrc"
   echo -e "\033[32mrmvl-dev-tools 工具已更新到最新版本。\033[0m"

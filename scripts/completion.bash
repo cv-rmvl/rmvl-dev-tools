@@ -77,11 +77,21 @@ function _lpss_completion() {
       COMPREPLY=()
       return 0
       ;;
-    node|topic)
+    node)
       if [[ $COMP_CWORD -eq 2 ]]; then
         local opts="info list"
         COMPREPLY=($(compgen -W "$opts" -- $cur))
       elif [[ $COMP_CWORD -eq 3 && "$prev" == "info" ]]; then
+        local list=$(lpss $subcommand list 2>/dev/null)
+        COMPREPLY=($(compgen -W "$list" -- $cur))
+      fi
+      return 0
+      ;;
+    topic)
+      if [[ $COMP_CWORD -eq 2 ]]; then
+        local opts="info list echo type hz bw"
+        COMPREPLY=($(compgen -W "$opts" -- $cur))
+      elif [[ $COMP_CWORD -eq 3 && "$prev" =~ ^(info|echo|type|hz|bw)$ ]]; then
         local list=$(lpss $subcommand list 2>/dev/null)
         COMPREPLY=($(compgen -W "$list" -- $cur))
       fi
