@@ -1,3 +1,7 @@
+1.0.3-260224
+
+- lpss echo 输出采用 nlohmann::json 格式化输出
+
 1.0.3-260223
 
 - lpss topic 增加 type、echo、hz 和 bw 子命令

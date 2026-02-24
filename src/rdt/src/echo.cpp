@@ -1,8 +1,7 @@
-
 #include <fmt/format.h>
-#include <fmt/ranges.h>
-#include <ranges>
+#include <nlohmann/json.hpp>
 
+#include <rmvlmsg/geometry/vector3.hpp>
 #include <rmvlmsg/std/bool.hpp>
 #include <rmvlmsg/std/char.hpp>
 #include <rmvlmsg/std/color_rgba.hpp>
@@ -32,86 +31,103 @@
 
 #include "rdt/rdt.hpp"
 
-using namespace fmt;
-using namespace fmt::literals;
-
 using namespace rm;
 
 namespace rdt {
 
 // 用于简化 echo 中按消息类型分发的宏
-#define LPSS_ECHO_CASE(MsgClass, ...)                                                                                             \
-    if (msgtype == msg::MsgClass::msg_type) {                                                                                     \
-        _active_sub = createSubscriber<msg::MsgClass>(topic, [cb = std::move(callback), topic, msgtype](const msg::MsgClass &m) { \
-            cb(fmt::format(__VA_ARGS__), 6 + topic.size() + msgtype.size() + m.compact_size());                                   \
-        });                                                                                                                       \
-        return;                                                                                                                   \
-    }
+#define LPSS_ECHO_CASE(MsgClass, ...)                                                                                                 \
+    do {                                                                                                                              \
+        if (msgtype == msg::MsgClass::msg_type) {                                                                                     \
+            _active_sub = createSubscriber<msg::MsgClass>(topic, [cb = std::move(callback), topic, msgtype](const msg::MsgClass &m) { \
+                cb(rm::json(__VA_ARGS__).dump(), 6 + topic.size() + msgtype.size() + m.compact_size());                               \
+            });                                                                                                                       \
+            return;                                                                                                                   \
+        }                                                                                                                             \
+    } while (0)
+
+static rm::basic_json<> point_json(const msg::Point &p) {
+    return {{"x", p.x}, {"y", p.y}, {"z", p.z}};
+}
+
+static rm::basic_json<> orientation_json(const msg::Quaternion &q) {
+    return {{"x", q.x}, {"y", q.y}, {"z", q.z}, {"w", q.w}};
+}
+
+static rm::basic_json<> vector3_json(const msg::Vector3 &p) {
+    return {{"x", p.x}, {"y", p.y}, {"z", p.z}};
+}
+
+static rm::basic_json<> header_json(const msg::Header &h) {
+    return {{"seq", h.seq}, {"stamp", h.stamp}, {"frame_id", h.frame_id}};
+}
+
+static rm::basic_json<> transform_json(const msg::Transform &t) {
+    return {{"translation", vector3_json(t.translation)}, {"rotation", orientation_json(t.rotation)}};
+}
+
+static rm::basic_json<> twist_json(const msg::Twist &t) {
+    return {{"linear", vector3_json(t.linear)}, {"angular", vector3_json(t.angular)}};
+}
+
+static rm::basic_json<> wrench_json(const msg::Wrench &w) {
+    return {{"force", vector3_json(w.force)}, {"torque", vector3_json(w.torque)}};
+}
+
+template <typename Range, typename Fn>
+static rm::basic_json<> json_array(const Range &range, Fn fn) {
+    auto arr = rm::basic_json<>::array();
+    for (const auto &item : range)
+        arr.push_back(fn(item));
+    return arr;
+}
 
 void LpssTool::echo(std::string_view topic, std::string_view msgtype, EchoCallback callback) {
     // std
-    LPSS_ECHO_CASE(Bool, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Char, R"({{"data": "{}"}})", m.data)
-    LPSS_ECHO_CASE(Int8, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Int16, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Int32, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Int64, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(UInt8, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(UInt16, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(UInt32, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(UInt64, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Float32, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(Float64, R"({{"data": {}}})", m.data)
-    LPSS_ECHO_CASE(String, R"({{"data": "{}"}})", m.data)
-    LPSS_ECHO_CASE(ColorRGBA, R"({{"r": {}, "g": {}, "b": {}, "a": {}}})", m.r, m.g, m.b, m.a)
-    LPSS_ECHO_CASE(Header, R"({{"seq": {}, "stamp": {}, "frame_id": "{}"}})", m.seq, m.stamp, m.frame_id)
+    LPSS_ECHO_CASE(Bool, {{"data", m.data}});
+    LPSS_ECHO_CASE(Char, {{"data", m.data}});
+    LPSS_ECHO_CASE(Int8, {{"data", m.data}});
+    LPSS_ECHO_CASE(Int16, {{"data", m.data}});
+    LPSS_ECHO_CASE(Int32, {{"data", m.data}});
+    LPSS_ECHO_CASE(Int64, {{"data", m.data}});
+    LPSS_ECHO_CASE(UInt8, {{"data", m.data}});
+    LPSS_ECHO_CASE(UInt16, {{"data", m.data}});
+    LPSS_ECHO_CASE(UInt32, {{"data", m.data}});
+    LPSS_ECHO_CASE(UInt64, {{"data", m.data}});
+    LPSS_ECHO_CASE(Float32, {{"data", m.data}});
+    LPSS_ECHO_CASE(Float64, {{"data", m.data}});
+    LPSS_ECHO_CASE(String, {{"data", m.data}});
+    LPSS_ECHO_CASE(ColorRGBA, {{"r", m.r}, {"g", m.g}, {"b", m.b}, {"a", m.a}});
+    LPSS_ECHO_CASE(Header, {{"seq", m.seq}, {"stamp", m.stamp}, {"frame_id", m.frame_id}});
     // geometry
-    LPSS_ECHO_CASE(Point, R"({{"x": {}, "y": {}, "z": {}}})", m.x, m.y, m.z)
-    LPSS_ECHO_CASE(Point32, R"({{"x": {}, "y": {}, "z": {}}})", m.x, m.y, m.z)
-    LPSS_ECHO_CASE(Vector3, R"({{"x": {}, "y": {}, "z": {}}})", m.x, m.y, m.z)
-    LPSS_ECHO_CASE(Quaternion, R"({{"x": {}, "y": {}, "z": {}, "w": {}}})", m.x, m.y, m.z, m.w)
-    LPSS_ECHO_CASE(Pose, R"({{"position": {{"x": {}, "y": {}, "z": {}}}, "orientation": {{"x": {}, "y": {}, "z": {}, "w": {}}}}})",
-                   m.position.x, m.position.y, m.position.z, m.orientation.x, m.orientation.y, m.orientation.z, m.orientation.w)
-    LPSS_ECHO_CASE(Twist, R"({{"linear": {{"x": {}, "y": {}, "z": {}}}, "angular": {{"x": {}, "y": {}, "z": {}}}}})",
-                   m.linear.x, m.linear.y, m.linear.z, m.angular.x, m.angular.y, m.angular.z)
-    LPSS_ECHO_CASE(Wrench, R"({{"force": {{"x": {}, "y": {}, "z": {}}}, "torque": {{"x": {}, "y": {}, "z": {}}}}})",
-                   m.force.x, m.force.y, m.force.z, m.torque.x, m.torque.y, m.torque.z)
-    LPSS_ECHO_CASE(Transform, R"({{"translation": {{"x": {}, "y": {}, "z": {}}}, "rotation": {{"x": {}, "y": {}, "z": {}, "w": {}}}}})",
-                   m.translation.x, m.translation.y, m.translation.z, m.rotation.x, m.rotation.y, m.rotation.z, m.rotation.w)
+    LPSS_ECHO_CASE(Point, point_json(m));
+    LPSS_ECHO_CASE(Point32, {{"x", m.x}, {"y", m.y}, {"z", m.z}});
+    LPSS_ECHO_CASE(Vector3, vector3_json(m));
+    LPSS_ECHO_CASE(Quaternion, orientation_json(m));
+    LPSS_ECHO_CASE(Pose, {{"position", point_json(m.position)}, {"orientation", orientation_json(m.orientation)}});
+    LPSS_ECHO_CASE(Twist, {{"linear", vector3_json(m.linear)}, {"angular", vector3_json(m.angular)}});
+    LPSS_ECHO_CASE(Wrench, {{"force", vector3_json(m.force)}, {"torque", vector3_json(m.torque)}});
+    LPSS_ECHO_CASE(Transform, {{"translation", vector3_json(m.translation)}, {"rotation", orientation_json(m.rotation)}});
     // sensor
-    LPSS_ECHO_CASE(Imu, R"({{"header": {{"seq": {}, "stamp": {}, "frame_id": "{}"}}, "orientation": {{"x": {}, "y": {}, "z": {}, "w": {}}}, )"
-                        R"("orientation_covariance": [{}], "angular_velocity": {{"x": {}, "y": {}, "z": {}}}, "angular_velocity_covariance": [{}], )"
-                        R"("linear_acceleration": {{"x": {}, "y": {}, "z": {}}}, "linear_acceleration_covariance": [{}]}})",
-                   m.header.seq, m.header.stamp, m.header.frame_id, m.orientation.x, m.orientation.y, m.orientation.z, m.orientation.w,
-                   fmt::join(m.orientation_covariance, ", "), m.angular_velocity.x, m.angular_velocity.y, m.angular_velocity.z,
-                   fmt::join(m.angular_velocity_covariance, ", "), m.linear_acceleration.x, m.linear_acceleration.y, m.linear_acceleration.z,
-                   fmt::join(m.linear_acceleration_covariance, ", "))
-    LPSS_ECHO_CASE(CameraInfo, R"({{"header": {{"seq": {}, "stamp": {}, "frame_id": "{}"}}, "height": {}, "width": {}, "D": [{}], "K": [{}]}})",
-                   m.header.seq, m.header.stamp, m.header.frame_id, m.height, m.width, fmt::join(m.D, ", "), fmt::join(m.K, ", "))
-    LPSS_ECHO_CASE(Image, R"({{"header": {{"seq": {}, "stamp": {}, "frame_id": "{}"}}, "height": {}, "width": {}, "encoding": "{}", "data_size": {}}})",
-                   m.header.seq, m.header.stamp, m.header.frame_id, m.height, m.width, m.encoding, m.data.size())
-    LPSS_ECHO_CASE(JointState, R"({{"header": {{"seq": {}, "stamp": {}, "frame_id": "{}"}}, "name": {}, "position": [{}], "velocity": [{}], "effort": [{}]}})",
-                   m.header.seq, m.header.stamp, m.header.frame_id, fmt::join(m.name, ", "), fmt::join(m.position, ", "),
-                   fmt::join(m.velocity, ", "), fmt::join(m.effort, ", "))
-    LPSS_ECHO_CASE(MultiDOFJointState,
-                   R"({{"header": {{"seq": {}, "stamp": {}, "frame_id": "{}"}}, "joint_names": [{}], "transforms": [{}], "twist": [{}], "wrench": [{}]}})",
-                   m.header.seq, m.header.stamp, m.header.frame_id,
-                   fmt::join(m.joint_names | std::views::transform([](const auto &s) { return fmt::format("\"{}\"", s); }), ", "),
-                   fmt::join(m.transforms | std::views::transform([](const auto &t) {
-                                 return fmt::format(R"({{"translation": {{"x": {}, "y": {}, "z": {}}}, "rotation": {{"x": {}, "y": {}, "z": {}, "w": {}}}}})",
-                                                    t.translation.x, t.translation.y, t.translation.z, t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
-                             }),
-                             ", "),
-                   fmt::join(m.twist | std::views::transform([](const auto &tw) {
-                                 return fmt::format(R"({{"linear": {{"x": {}, "y": {}, "z": {}}}, "angular": {{"x": {}, "y": {}, "z": {}}}}})",
-                                                    tw.linear.x, tw.linear.y, tw.linear.z, tw.angular.x, tw.angular.y, tw.angular.z);
-                             }),
-                             ", "),
-                   fmt::join(m.wrench | std::views::transform([](const auto &w) {
-                                 return fmt::format(R"({{"force": {{"x": {}, "y": {}, "z": {}}}, "torque": {{"x": {}, "y": {}, "z": {}}}}})",
-                                                    w.force.x, w.force.y, w.force.z, w.torque.x, w.torque.y, w.torque.z);
-                             }),
-                             ", "))
+    LPSS_ECHO_CASE(Imu, {
+                            {"header", header_json(m.header)},
+                            {"orientation", orientation_json(m.orientation)},
+                            {"orientation_covariance", m.orientation_covariance},
+                            {"angular_velocity", vector3_json(m.angular_velocity)},
+                            {"angular_velocity_covariance", m.angular_velocity_covariance},
+                            {"linear_acceleration", vector3_json(m.linear_acceleration)},
+                            {"linear_acceleration_covariance", m.linear_acceleration_covariance},
+                        });
+    LPSS_ECHO_CASE(CameraInfo, {{"header", header_json(m.header)}, {"height", m.height}, {"width", m.width}, {"D", m.D}, {"K", m.K}});
+    LPSS_ECHO_CASE(Image, {{"header", header_json(m.header)}, {"height", m.height}, {"width", m.width}, {"encoding", m.encoding}, {"data_size", m.data.size()}});
+    LPSS_ECHO_CASE(JointState, {{"header", header_json(m.header)}, {"name", m.name}, {"position", m.position}, {"velocity", m.velocity}, {"effort", m.effort}});
+    LPSS_ECHO_CASE(MultiDOFJointState, {
+                                           {"header", header_json(m.header)},
+                                           {"joint_names", m.joint_names},
+                                           {"transforms", json_array(m.transforms, transform_json)},
+                                           {"twist", json_array(m.twist, twist_json)},
+                                           {"wrench", json_array(m.wrench, wrench_json)},
+                                       });
     fmt::println("\033[33mUnsupported message type: {}\033[0m", msgtype);
 }
 
