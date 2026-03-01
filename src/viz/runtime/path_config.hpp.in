@@ -1,0 +1,21 @@
+/**
+ * @file path_config.hpp
+ * @author zhaoxi (535394140@qq.com)
+ * @brief
+ * @version 1.0
+ * @date 2026-01-21
+ *
+ * @copyright Copyright (c) 2025, zhaoxi
+ *
+ */
+
+#pragma once
+
+#include <string>
+
+namespace path {
+
+//! 前端资源路径，尾置 "/"
+inline const std::string frontend = "@CMAKE_CURRENT_LIST_DIR@/viz/dist/";
+
+} // namespace path

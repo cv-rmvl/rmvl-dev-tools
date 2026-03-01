@@ -36,7 +36,7 @@ case "$command" in
     echo " │ 视觉控制一体库。本工具提供了 RMVL 相关的命令行工具，具体使用方法如下。   │"
     echo " └──────────────────────────────────────────────────────────────────────────┘"
     usage
-    echo -e "\n更多信息请参考官方手册:"
+    echo -e "\n此工具支持的根命令有: \033[33mrmvl\033[0m、\033[33mlpss\033[0m 和 \033[33mlviz\033[0m，更多信息请参考官方手册:"
     echo -e "  用户手册: \033[32mhttps://cv-rmvl.github.io/\033[0m"
     echo -e "  API 文档: \033[32mhttps://cv-rmvl.github.io/docs/2.x/\033[0m"
     echo -e "  GitHub:   \033[32mhttps://github.com/cv-rmvl/rmvl\033[0m"

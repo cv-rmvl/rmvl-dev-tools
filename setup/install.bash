@@ -92,8 +92,8 @@ fi
 echo -e "\033[32m正在构建 rmvl-dev-tools...\033[0m"
 cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build_tmp" > /dev/null
 cmake --build "$TOOLS_ROOT/build_tmp" > /dev/null
-for name in lpss_tool; do
-  cp "$TOOLS_ROOT/build_tmp/$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_$name"
+for name in tool viz; do
+  cp "$TOOLS_ROOT/build_tmp/lpss_$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_lpss_$name"
 done
 rm -rf "$TOOLS_ROOT/build_tmp"
 

@@ -55,7 +55,7 @@ case "$command" in
     ;;
   viz)
     if [ -f "$script_dir/_autogen_lpss_viz" ]; then
-      "$script_dir/_autogen_lpss_viz" "$@"
+      "$script_dir/_autogen_lpss_viz" $(uuidgen | cut -c 1-5)
     else
       echo "lpss viz 工具尚未实现。敬请期待！"
     fi
