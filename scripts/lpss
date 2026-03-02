@@ -5,12 +5,13 @@ set -eu
 function usage() {
   echo "用法: $(basename $0) <command> [args...]"
   echo "命令:"
-  echo "   help     显示详细帮助信息"
-  echo "   create   创建一个依赖 lpss 的新项目"
-  echo "   node     lpss 节点工具"
-  echo "   topic    lpss 话题工具"
-  echo "   graph    前后端分离的 lpss 节点图工具"
-  echo "   viz      前后端分离的 lpss 3D 可视化工具"
+  echo "   help      显示详细帮助信息"
+  echo "   create    创建一个依赖 lpss 的新项目"
+  echo "   node      lpss 节点工具"
+  echo "   topic     lpss 话题工具"
+  echo "   interface 内置消息接口查看工具"
+  echo "   graph     前后端分离的 lpss 节点图工具"
+  echo "   viz       前后端分离的 lpss 3D 可视化工具"
 }
 
 if [ $# -lt 1 ]; then
@@ -45,6 +46,9 @@ case "$command" in
     ;;
   topic)
     "$script_dir/topic.bash" "$@"
+    ;;
+  interface)
+    "$script_dir/interface.bash" "$@"
     ;;
   graph)
     if [ -f "$script_dir/_autogen_lpss_graph" ]; then

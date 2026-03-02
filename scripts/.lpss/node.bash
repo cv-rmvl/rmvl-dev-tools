@@ -4,6 +4,7 @@ set -eu
 
 function usage() {
   echo "用法: lpss node [info | list]"
+  echo "   help:    显示此帮助信息"
   echo "   info:    显示节点信息"
   echo "   list:    列出所有节点"
 }
@@ -35,6 +36,9 @@ if [ ! -f "$cur_dir/_autogen_lpss_tool" ]; then
 fi
 
 case $mode in
+  help)
+    usage
+    ;;
   info)
     node_info "$@"
     ;;

@@ -63,7 +63,7 @@ function _lpss_completion() {
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
 
   # Top level commands
-  commands="help create node topic graph viz"
+  commands="help create node topic interface graph viz"
 
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     COMPREPLY=($(compgen -W "$commands" -- $cur))
@@ -79,7 +79,7 @@ function _lpss_completion() {
       ;;
     node)
       if [[ $COMP_CWORD -eq 2 ]]; then
-        local opts="info list"
+        local opts="help info list"
         COMPREPLY=($(compgen -W "$opts" -- $cur))
       elif [[ $COMP_CWORD -eq 3 && "$prev" == "info" ]]; then
         local list=$(lpss $subcommand list 2>/dev/null)
@@ -89,9 +89,22 @@ function _lpss_completion() {
       ;;
     topic)
       if [[ $COMP_CWORD -eq 2 ]]; then
-        local opts="info list echo type hz bw"
+        local opts="help info list echo type hz bw"
         COMPREPLY=($(compgen -W "$opts" -- $cur))
       elif [[ $COMP_CWORD -eq 3 && "$prev" =~ ^(info|echo|type|hz|bw)$ ]]; then
+        local list=$(lpss $subcommand list 2>/dev/null)
+        COMPREPLY=($(compgen -W "$list" -- $cur))
+      fi
+      return 0
+      ;;
+    interface)
+      if [[ $COMP_CWORD -eq 2 ]]; then
+        local opts="help list group groups show"
+        COMPREPLY=($(compgen -W "$opts" -- $cur))
+      elif [[ $COMP_CWORD -eq 3 && "$prev" == "group" ]]; then
+        local list=$(lpss $subcommand groups 2>/dev/null)
+        COMPREPLY=($(compgen -W "$list" -- $cur))
+      elif [[ $COMP_CWORD -eq 3 && "$prev" == "show" ]]; then
         local list=$(lpss $subcommand list 2>/dev/null)
         COMPREPLY=($(compgen -W "$list" -- $cur))
       fi

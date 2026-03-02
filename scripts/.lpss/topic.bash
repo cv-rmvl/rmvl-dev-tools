@@ -3,7 +3,8 @@
 set -eu
 
 function usage() {
-  echo "用法: lpss topic [info | list | echo | type]"
+  echo "用法: lpss topic [help | info | list | echo | type]"
+  echo "   help:    显示此帮助信息"
   echo "   info:    显示话题信息"
   echo "   list:    列出所有话题"
   echo "   echo:    显示话题内容"
@@ -37,6 +38,9 @@ function topic_list() {
 }
 
 case $mode in
+  help)
+    usage
+    ;;
   info)
     topic_with_name ti info "$@"
     ;;
