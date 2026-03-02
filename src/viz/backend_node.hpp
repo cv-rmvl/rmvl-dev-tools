@@ -15,9 +15,11 @@
 #include <rmvl/lpss/cv.hpp>
 #include <rmvl/lpss/node.hpp>
 
+#include <rmvlmsg/geometry/twist.hpp>
 #include <rmvlmsg/geometry/wrench.hpp>
-#include <rmvlmsg/sensor/image.hpp>
 #include <rmvlmsg/motion/tf.hpp>
+#include <rmvlmsg/sensor/image.hpp>
+#include <rmvlmsg/std/string.hpp>
 #include <rmvlmsg/viz/marker_array.hpp>
 
 #include "backend_def.hpp"
@@ -38,19 +40,23 @@ private:
     rm::async::Webapp app{_ctx};
 
     // geometry/Point
-    LVIZ_MANAGE_REGISTER(Point, point, rm::msg::Point);
+    LVIZ_MANAGE_REGISTER(point, Point, rm::msg::Point);
     // geometry/Pose
-    LVIZ_MANAGE_REGISTER(Pose, pose, rm::msg::Pose);
+    LVIZ_MANAGE_REGISTER(pose, Pose, rm::msg::Pose);
+    // geometry/Twist
+    LVIZ_MANAGE_REGISTER(twist, Twist, rm::msg::Twist);
     // geometry/Wrench
-    LVIZ_MANAGE_REGISTER(Wrench, wrench, rm::msg::Wrench);
+    LVIZ_MANAGE_REGISTER(wrench, Wrench, rm::msg::Wrench);
     // sensor/Image
-    LVIZ_MANAGE_REGISTER(Image, img, cv::Mat);
+    LVIZ_MANAGE_REGISTER(img, Image, cv::Mat);
     // motion/TF
-    LVIZ_MANAGE_REGISTER(TF, tf, rm::msg::TF);
+    LVIZ_MANAGE_REGISTER(tf, TF, rm::msg::TF);
     // viz/Marker
-    LVIZ_MANAGE_REGISTER(Marker, marker, rm::msg::Marker);
+    LVIZ_MANAGE_REGISTER(marker, Marker, rm::msg::Marker);
     // viz/MarkerArray
-    LVIZ_MANAGE_REGISTER(MarkerArray, marker_array, rm::msg::MarkerArray);
+    LVIZ_MANAGE_REGISTER(marker_array, MarkerArray, rm::msg::MarkerArray);
+    // robotmodel
+    LVIZ_MANAGE_REGISTER(robot_model, String, std::string);
 
     /**
      * @brief 释放缓存并更新计数器，如果计数器为 0 则删除缓存

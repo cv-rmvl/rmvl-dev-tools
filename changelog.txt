@@ -1,6 +1,7 @@
 1.0.4-260302
 
 - 增加 lpss interface 命令，用于查看内置消息接口的定义
+- LViz 工具增加对 geometry/twist 的支持，暂不支持 RobotModel 工具
 
 1.0.4-260301
 

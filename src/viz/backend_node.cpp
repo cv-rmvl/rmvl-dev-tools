@@ -30,6 +30,7 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
     LVIZ_REQUEST_REGISTER("/geometry/point", point);
     LVIZ_REQUEST_REGISTER("/geometry/pose", pose);
     LVIZ_REQUEST_REGISTER("/geometry/wrench", wrench);
+    LVIZ_REQUEST_REGISTER("/geometry/twist", twist);
     LVIZ_REQUEST_REGISTER("/sensor/image", img);
     LVIZ_REQUEST_REGISTER("/motion/tf", tf);
     LVIZ_REQUEST_REGISTER("/viz/marker", marker);

@@ -165,34 +165,44 @@ void BackendNode::get_cleanup(const rm::Request &req, rm::Response &res) {
 }
 
 void BackendNode::get_point(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(Point, point, msg);
+    LVIZ_GET_DISPATCH(point, Point, msg);
     res.json(point_json(cache));
 }
 
-void BackendNode::delete_point(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(Point, point); }
+void BackendNode::delete_point(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(point, Point); }
 
 void BackendNode::get_pose(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(Pose, pose, msg);
+    LVIZ_GET_DISPATCH(pose, Pose, msg);
     res.json({
         {"position", point_json(cache.position)},
         {"orientation", orientation_json(cache.orientation)},
     });
 }
 
-void BackendNode::delete_pose(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(Pose, pose); }
+void BackendNode::delete_pose(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(pose, Pose); }
 
 void BackendNode::get_wrench(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(Wrench, wrench, msg);
+    LVIZ_GET_DISPATCH(wrench, Wrench, msg);
     res.json({
         {"force", vector3_json(cache.force)},
         {"torque", vector3_json(cache.torque)},
     });
 }
 
-void BackendNode::delete_wrench(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(Wrench, wrench); }
+void BackendNode::delete_wrench(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(wrench, Wrench); }
+
+void BackendNode::get_twist(const rm::Request &req, rm::Response &res) {
+    LVIZ_GET_DISPATCH(twist, Twist, msg);
+    res.json({
+        {"linear", vector3_json(cache.linear)},
+        {"angular", vector3_json(cache.angular)},
+    });
+}
+
+void BackendNode::delete_twist(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(twist, Twist); }
 
 void BackendNode::get_img(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(Image, img, rm::cvmsg::from_msg(msg));
+    LVIZ_GET_DISPATCH(img, Image, rm::cvmsg::from_msg(msg));
 
     std::string_view option = req.query.at("option");
 
@@ -214,10 +224,10 @@ void BackendNode::get_img(const rm::Request &req, rm::Response &res) {
     }
 }
 
-void BackendNode::delete_img(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(Image, img); }
+void BackendNode::delete_img(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(img, Image); }
 
 void BackendNode::get_tf(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(TF, tf, msg);
+    LVIZ_GET_DISPATCH(tf, TF, msg);
     res.json(json_array(cache.transforms, [](const rm::msg::TransformStamped &t) -> rm::basic_json<> {
         return {
             {"frame_id", t.header.frame_id},
@@ -228,20 +238,25 @@ void BackendNode::get_tf(const rm::Request &req, rm::Response &res) {
     }));
 }
 
-void BackendNode::delete_tf(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(TF, tf); }
+void BackendNode::delete_tf(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(tf, TF); }
 
 void BackendNode::get_marker(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(Marker, marker, msg);
+    LVIZ_GET_DISPATCH(marker, Marker, msg);
     res.json(marker_json(cache));
 }
 
-void BackendNode::delete_marker(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(Marker, marker); }
+void BackendNode::delete_marker(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(marker, Marker); }
 
 void BackendNode::get_marker_array(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(MarkerArray, marker_array, msg);
+    LVIZ_GET_DISPATCH(marker_array, MarkerArray, msg);
     res.json(json_array(cache.markers, marker_json));
 }
 
-void BackendNode::delete_marker_array(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(MarkerArray, marker_array); }
+void BackendNode::delete_marker_array(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(marker_array, MarkerArray); }
+
+void BackendNode::get_robot_model(const rm::Request &req, rm::Response &res) {
+    LVIZ_GET_DISPATCH(robot_model, String, msg.data);
+    res.status(404); // 目前尚未实现 RobotModel 的 JSON 转换，返回 404 Not Found
+}
 
 } // namespace lviz
