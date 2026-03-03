@@ -150,16 +150,16 @@ void BackendNode::get_topics(const rm::Request &req, rm::Response &res) {
 }
 
 void BackendNode::get_cleanup(const rm::Request &req, rm::Response &res) {
-    // Pose
-    for (const auto &[id, display] : _pose_subs)
-        this->destroySubscriber<rm::msg::Pose>(display.sub);
-    _pose_subs.clear();
-    _pose_cache.clear();
-    // Image
-    for (const auto &[id, display] : _img_subs)
-        this->destroySubscriber<rm::msg::Image>(display.sub);
-    _img_subs.clear();
-    _img_cache.clear();
+    const std::string uuid = req.query.at("uuid");
+    LVIZ_CLEANUP_DISPATCH(point, Point, uuid);
+    LVIZ_CLEANUP_DISPATCH(pose, Pose, uuid);
+    LVIZ_CLEANUP_DISPATCH(twist, Twist, uuid);
+    LVIZ_CLEANUP_DISPATCH(wrench, Wrench, uuid);
+    LVIZ_CLEANUP_DISPATCH(img, Image, uuid);
+    LVIZ_CLEANUP_DISPATCH(tf, TF, uuid);
+    LVIZ_CLEANUP_DISPATCH(marker, Marker, uuid);
+    LVIZ_CLEANUP_DISPATCH(marker_array, MarkerArray, uuid);
+    LVIZ_CLEANUP_DISPATCH(robot_model, String, uuid);
     // 返回 204 No Content，表示清理完成但无内容返回
     res.status(204);
 }

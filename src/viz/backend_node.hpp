@@ -59,28 +59,24 @@ private:
     LVIZ_MANAGE_REGISTER(robot_model, String, std::string);
 
     /**
-     * @brief 释放缓存并更新计数器，如果计数器为 0 则删除缓存
+     * @brief 释放共享订阅，减少引用计数，如果计数归零则销毁订阅者并清除缓存
      *
-     * @tparam CacheHashMap 缓存哈希表类型
-     * @param[in] cache_map 缓存哈希表
+     * @tparam SharedHashMap 共享订阅哈希表类型
+     * @tparam MsgType 消息类型
+     * @param[in] shared_map 共享订阅哈希表
      * @param[in] topic 话题名称
      */
-    template <typename CacheHashMap>
-    inline void release_cache(CacheHashMap &cache_map, const std::string &topic) {
-        cache_map[topic].count--;
-        if (cache_map[topic].count == 0)
-            cache_map.erase(topic);
+    template <typename MsgType, typename SharedHashMap>
+    inline void release_shared(SharedHashMap &shared_map, const std::string &topic) {
+        auto it = shared_map.find(topic);
+        if (it == shared_map.end())
+            return;
+        it->second.count--;
+        if (it->second.count == 0) {
+            this->destroySubscriber<MsgType>(it->second.sub);
+            shared_map.erase(it);
+        }
     }
-
-    /**
-     * @brief 获取缓存并更新计数器，如果缓存不存在则创建新缓存
-     *
-     * @tparam CacheHashMap 缓存哈希表类型
-     * @param[in] cache_map 缓存哈希表
-     * @param[in] topic 话题名称
-     */
-    template <typename CacheHashMap>
-    inline void acquire_cache(CacheHashMap &cache_map, const std::string &topic) { cache_map[topic].count++; }
 };
 
 } // namespace lviz
