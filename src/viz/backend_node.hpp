@@ -18,6 +18,7 @@
 #include <rmvlmsg/geometry/twist.hpp>
 #include <rmvlmsg/geometry/wrench.hpp>
 #include <rmvlmsg/motion/tf.hpp>
+#include <rmvlmsg/motion/urdf.hpp>
 #include <rmvlmsg/sensor/image.hpp>
 #include <rmvlmsg/std/string.hpp>
 #include <rmvlmsg/viz/marker_array.hpp>
@@ -33,30 +34,31 @@ public:
 private:
     //! GET /topics 请求处理函数，返回符合查询条件的话题列表
     void get_topics(const rm::Request &req, rm::Response &res);
-
     //! POST /cleanup 请求处理函数，清理所有订阅和缓存
     void get_cleanup(const rm::Request &req, rm::Response &res);
+    //! GET /mesh 请求处理函数，返回网格数据
+    void get_mesh(const rm::Request &req, rm::Response &res);
 
     rm::async::Webapp app{_ctx};
 
-    // geometry/Point
+    // Point: geometry/Point
     LVIZ_MANAGE_REGISTER(point, Point, rm::msg::Point);
-    // geometry/Pose
+    // Pose: geometry/Pose
     LVIZ_MANAGE_REGISTER(pose, Pose, rm::msg::Pose);
-    // geometry/Twist
+    // Twist: geometry/Twist
     LVIZ_MANAGE_REGISTER(twist, Twist, rm::msg::Twist);
-    // geometry/Wrench
+    // Wrench: geometry/Wrench
     LVIZ_MANAGE_REGISTER(wrench, Wrench, rm::msg::Wrench);
-    // sensor/Image
-    LVIZ_MANAGE_REGISTER(img, Image, cv::Mat);
-    // motion/TF
+    // Image: sensor/Image
+    LVIZ_MANAGE_REGISTER(image, Image, cv::Mat);
+    // TF: motion/TF
     LVIZ_MANAGE_REGISTER(tf, TF, rm::msg::TF);
-    // viz/Marker
+    // Marker: viz/Marker
     LVIZ_MANAGE_REGISTER(marker, Marker, rm::msg::Marker);
-    // viz/MarkerArray
+    // MarkerArray: viz/MarkerArray
     LVIZ_MANAGE_REGISTER(marker_array, MarkerArray, rm::msg::MarkerArray);
-    // robotmodel
-    LVIZ_MANAGE_REGISTER(robot_model, String, std::string);
+    // RobotModel: motion/TF, std/String (URDF)
+    LVIZ_MANAGE_REGISTER2(robotmodel, urdf, URDF, rm::msg::URDF, tf, TF, rm::msg::TF);
 
     /**
      * @brief 释放共享订阅，减少引用计数，如果计数归零则销毁订阅者并清除缓存

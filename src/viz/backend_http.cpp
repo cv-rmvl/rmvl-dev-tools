@@ -10,13 +10,19 @@
  */
 
 #include <cstdio>
+#include <fstream>
 #include <nlohmann/json.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <rmvlmsg/motion/urdf.hpp>
 
 #include "backend_def.hpp"
 #include "backend_node.hpp"
 
 namespace lviz {
+
+#ifdef __MSVC__
+#pragma region Utility Functions
+#endif
 
 /**
  * @brief URL 解码，将 URL 编码的字符串转换回原始字符串
@@ -29,8 +35,8 @@ static std::string urldecode(std::string_view value) {
     result.reserve(value.length());
     for (size_t i = 0; i < value.length(); ++i) {
         if (value[i] == '%' && i + 2 < value.length()) {
-            std::string_view hex = value.substr(i + 1, 2);
-            char ch = static_cast<char>(std::strtol(hex.data(), nullptr, 16));
+            char hex[3] = {value[i + 1], value[i + 2], '\0'};
+            char ch = static_cast<char>(std::strtol(hex, nullptr, 16));
             result += ch;
             i += 2;
         } else if (value[i] == '+')
@@ -130,6 +136,11 @@ static rm::basic_json<> marker_json(const rm::msg::Marker &marker) {
     };
 }
 
+#ifdef __MSVC__
+#pragma endregion
+#pragma region LViz Basic Requests
+#endif
+
 void BackendNode::get_topics(const rm::Request &req, rm::Response &res) {
     std::string_view type = req.query.at("type");             // "reader"、"writer" 或 "any"
     std::string msgtype = urldecode(req.query.at("msgtype")); // 消息类型，例如 "sensor/Image" 或 "any"
@@ -155,14 +166,44 @@ void BackendNode::get_cleanup(const rm::Request &req, rm::Response &res) {
     LVIZ_CLEANUP_DISPATCH(pose, Pose, uuid);
     LVIZ_CLEANUP_DISPATCH(twist, Twist, uuid);
     LVIZ_CLEANUP_DISPATCH(wrench, Wrench, uuid);
-    LVIZ_CLEANUP_DISPATCH(img, Image, uuid);
+    LVIZ_CLEANUP_DISPATCH(image, Image, uuid);
     LVIZ_CLEANUP_DISPATCH(tf, TF, uuid);
     LVIZ_CLEANUP_DISPATCH(marker, Marker, uuid);
     LVIZ_CLEANUP_DISPATCH(marker_array, MarkerArray, uuid);
-    LVIZ_CLEANUP_DISPATCH(robot_model, String, uuid);
+    LVIZ_CLEANUP_DISPATCH2(robotmodel, urdf, URDF, tf, TF, uuid);
     // 返回 204 No Content，表示清理完成但无内容返回
     res.status(204);
 }
+
+void BackendNode::get_mesh(const rm::Request &req, rm::Response &res) {
+    std::string filepath = urldecode(req.query.at("filepath"));
+    if (filepath.empty()) {
+        res.status(400);
+        return;
+    }
+
+    std::ifstream file(filepath, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        res.status(404);
+        return;
+    }
+
+    auto size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::string buffer(static_cast<size_t>(size), '\0');
+    if (!file.read(buffer.data(), size)) {
+        res.status(500);
+        return;
+    }
+
+    res.send(std::string_view(buffer.data(), buffer.size()));
+    res.set("Content-Type", "application/octet-stream");
+}
+
+#ifdef __MSVC__
+#pragma endregion
+#pragma region LViz Manage Register
+#endif
 
 void BackendNode::get_point(const rm::Request &req, rm::Response &res) {
     LVIZ_GET_DISPATCH(point, Point, msg);
@@ -201,8 +242,8 @@ void BackendNode::get_twist(const rm::Request &req, rm::Response &res) {
 
 void BackendNode::delete_twist(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(twist, Twist); }
 
-void BackendNode::get_img(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(img, Image, rm::cvmsg::from_msg(msg));
+void BackendNode::get_image(const rm::Request &req, rm::Response &res) {
+    LVIZ_GET_DISPATCH(image, Image, rm::cvmsg::from_msg(msg));
 
     std::string_view option = req.query.at("option");
 
@@ -224,7 +265,7 @@ void BackendNode::get_img(const rm::Request &req, rm::Response &res) {
     }
 }
 
-void BackendNode::delete_img(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(img, Image); }
+void BackendNode::delete_image(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(image, Image); }
 
 void BackendNode::get_tf(const rm::Request &req, rm::Response &res) {
     LVIZ_GET_DISPATCH(tf, TF, msg);
@@ -254,9 +295,30 @@ void BackendNode::get_marker_array(const rm::Request &req, rm::Response &res) {
 
 void BackendNode::delete_marker_array(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(marker_array, MarkerArray); }
 
-void BackendNode::get_robot_model(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH(robot_model, String, msg.data);
-    res.status(404); // 目前尚未实现 RobotModel 的 JSON 转换，返回 404 Not Found
+void BackendNode::get_robotmodel_urdf(const rm::Request &req, rm::Response &res) {
+    LVIZ_GET_DISPATCH2(robotmodel, urdf, URDF, msg);
+    res.json({
+        {"urdf", cache.data},
+        {"mesh_path", cache.mesh_path},
+    });
 }
+
+void BackendNode::get_robotmodel_tf(const rm::Request &req, rm::Response &res) {
+    LVIZ_GET_DISPATCH2(robotmodel, tf, TF, msg);
+    res.json(json_array(cache.transforms, [](const rm::msg::TransformStamped &t) -> rm::basic_json<> {
+        return {
+            {"frame_id", t.header.frame_id},
+            {"child_frame_id", t.child_frame_id},
+            {"translation", vector3_json(t.transform.translation)},
+            {"rotation", orientation_json(t.transform.rotation)},
+        };
+    }));
+}
+
+void BackendNode::delete_robotmodel(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH2(robotmodel, urdf, URDF, tf, TF); }
+
+#ifdef __MSVC__
+#pragma endregion
+#endif
 
 } // namespace lviz

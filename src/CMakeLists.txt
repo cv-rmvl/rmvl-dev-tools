@@ -27,3 +27,7 @@ rmvl_add_exe(
   SOURCES viz/backend_http.cpp viz/backend_node.cpp
   DEPENDS lpss
 )
+
+target_compile_definitions(
+  lpss_viz PRIVATE LVIZ_VERSION="1.0.0"
+)

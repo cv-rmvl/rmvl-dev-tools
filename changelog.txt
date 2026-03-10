@@ -2,6 +2,7 @@
 
 - rmvl remove lib 将自动删除文档
 - lpss topic echo 支持 TF 和 URDF 的消息输出
+- LViz 增加对 RobotModel 工具的支持
 
 1.0.4-260303
 
