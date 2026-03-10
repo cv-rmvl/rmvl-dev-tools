@@ -31,7 +31,8 @@ function remove_lib() {
   sudo rm -f /usr/local/lib/librmvl_*
   sudo rm -rf /usr/local/lib/cmake/RMVL
   sudo rm -rf /usr/local/include/RMVL
-  echo -e "\033[32mRMVL 动态/静态库已被移除\033[0m"
+  sudo rm -rf /usr/local/share/doc/RMVL
+  echo -e "\033[32mRMVL 库文件、头文件、CMake 配置、文档已被移除\033[0m"
 }
 
 case $mode in

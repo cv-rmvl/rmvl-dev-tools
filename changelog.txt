@@ -1,3 +1,8 @@
+1.0.4-260310
+
+- rmvl remove lib 将自动删除文档
+- lpss topic echo 支持 TF 和 URDF 的消息输出
+
 1.0.4-260303
 
 - LViz 增加无状态支持，允许存在多个 LViz 前端实例，共享数据的同时互不干扰

@@ -30,12 +30,12 @@ std::vector<node> LpssTool::info() const {
             auto *from_nd = find_node(writer_guid);
             if (!from_nd)
                 continue;
-            from_nd->pubs.emplace_back(topic_name, std::string(writer_storage.msgtype));
+            from_nd->pubs.emplace_back(topic_name, writer_storage.msgtype);
             if (rit != _discovered_readers.end())
                 for (const auto &[reader_guid, locator] : rit->second.readers) {
                     auto *to_nd = find_node(reader_guid);
                     if (to_nd)
-                        to_nd->subs.emplace_back(topic_name, std::string(writer_storage.msgtype));
+                        to_nd->subs.emplace_back(topic_name, writer_storage.msgtype);
                 }
         }
     }
@@ -47,7 +47,7 @@ std::vector<node> LpssTool::info() const {
             auto *to_nd = find_node(reader_guid);
             if (!to_nd)
                 continue;
-            to_nd->subs.emplace_back(topic_name, std::string(reader_storage.msgtype));
+            to_nd->subs.emplace_back(topic_name, reader_storage.msgtype);
         }
     }
 
@@ -64,9 +64,9 @@ std::vector<std::string> LpssTool::nodes() const {
 std::unordered_map<std::string, std::string> LpssTool::topics() const {
     std::unordered_map<std::string, std::string> result;
     for (const auto &[topic_name, writer_storage] : _discovered_writers)
-        result.emplace(topic_name, std::string(writer_storage.msgtype));
+        result.emplace(topic_name, writer_storage.msgtype);
     for (const auto &[topic_name, reader_storage] : _discovered_readers)
-        result.emplace(topic_name, std::string(reader_storage.msgtype));
+        result.emplace(topic_name, reader_storage.msgtype);
     return result;
 }
 

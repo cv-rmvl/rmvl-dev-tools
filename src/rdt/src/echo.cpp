@@ -1,7 +1,6 @@
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
 
-#include <rmvlmsg/geometry/vector3.hpp>
 #include <rmvlmsg/std/bool.hpp>
 #include <rmvlmsg/std/char.hpp>
 #include <rmvlmsg/std/color_rgba.hpp>
@@ -19,7 +18,6 @@
 
 #include <rmvlmsg/geometry/point32.hpp>
 #include <rmvlmsg/geometry/pose.hpp>
-#include <rmvlmsg/geometry/transform.hpp>
 #include <rmvlmsg/geometry/twist.hpp>
 #include <rmvlmsg/geometry/wrench.hpp>
 
@@ -28,6 +26,9 @@
 #include <rmvlmsg/sensor/imu.hpp>
 #include <rmvlmsg/sensor/joint_state.hpp>
 #include <rmvlmsg/sensor/multi_dofjoint_state.hpp>
+
+#include <rmvlmsg/motion/tf.hpp>
+#include <rmvlmsg/motion/urdf.hpp>
 
 #include "rdt/rdt.hpp"
 
@@ -64,6 +65,10 @@ static rm::basic_json<> header_json(const msg::Header &h) {
 
 static rm::basic_json<> transform_json(const msg::Transform &t) {
     return {{"translation", vector3_json(t.translation)}, {"rotation", orientation_json(t.rotation)}};
+}
+
+static rm::basic_json<> transformstamped_json(const msg::TransformStamped &t) {
+    return {{"header", header_json(t.header)}, {"child_frame_id", t.child_frame_id}, {"transform", transform_json(t.transform)}};
 }
 
 static rm::basic_json<> twist_json(const msg::Twist &t) {
@@ -128,6 +133,11 @@ void LpssTool::echo(std::string_view topic, std::string_view msgtype, EchoCallba
                                            {"twist", json_array(m.twist, twist_json)},
                                            {"wrench", json_array(m.wrench, wrench_json)},
                                        });
+    LPSS_ECHO_CASE(TF, {{"transforms", json_array(m.transforms, transformstamped_json)}});
+    LPSS_ECHO_CASE(URDF, {
+                             {"data_size", m.data.size()},
+                             {"mesh_path", m.mesh_path},
+                         });
     fmt::println("\033[33mUnsupported message type: {}\033[0m", msgtype);
 }
 
