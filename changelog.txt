@@ -1,3 +1,7 @@
+1.0.4-260312
+
+- LViz 支持同时显示 TF 和 RobotModel
+
 1.0.4-260310
 
 - rmvl remove lib 将自动删除文档

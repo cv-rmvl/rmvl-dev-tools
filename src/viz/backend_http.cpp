@@ -170,7 +170,15 @@ void BackendNode::get_cleanup(const rm::Request &req, rm::Response &res) {
     LVIZ_CLEANUP_DISPATCH(tf, TF, uuid);
     LVIZ_CLEANUP_DISPATCH(marker, Marker, uuid);
     LVIZ_CLEANUP_DISPATCH(marker_array, MarkerArray, uuid);
-    LVIZ_CLEANUP_DISPATCH2(robotmodel, urdf, URDF, tf, TF, uuid);
+    if (_robotmodel_displays.contains(uuid)) {
+        for (const auto &[_id_, _display_] : _robotmodel_displays[uuid]) {
+            if (!_display_.topic_urdf.empty())
+                release_shared<rm::msg::URDF>(_robotmodel_urdf_shared, _display_.topic_urdf);
+            if (!_display_.topic_tf.empty())
+                release_shared<rm::msg::TF>(_tf_shared, _display_.topic_tf);
+        }
+        _robotmodel_displays.erase(uuid);
+    }
     // 返回 204 No Content，表示清理完成但无内容返回
     res.status(204);
 }
@@ -304,7 +312,45 @@ void BackendNode::get_robotmodel_urdf(const rm::Request &req, rm::Response &res)
 }
 
 void BackendNode::get_robotmodel_tf(const rm::Request &req, rm::Response &res) {
-    LVIZ_GET_DISPATCH2(robotmodel, tf, TF, msg);
+    // 复用 _tf_shared 而非独立的 _robotmodel_tf_shared，避免同一 TF 话题创建多个订阅者
+    const std::string uuid = req.query.at("uuid");
+    const std::string id = req.query.at("id");
+    const std::string topic = urldecode(req.query.at("topic"));
+    if (topic.empty()) {
+        res.status(400);
+        return;
+    }
+    auto &_disps_ = _robotmodel_displays[uuid];
+    if (!_disps_.contains(id) || _disps_[id].topic_tf.empty()) {
+        if (!_tf_shared.contains(topic))
+            _tf_shared[topic].sub =
+                this->createSubscriber<rm::msg::TF>(topic, [this, topic](const rm::msg::TF &msg) {
+                    _tf_shared[topic].cache = msg;
+                    _tf_shared[topic].received = true;
+                });
+        _tf_shared[topic].count++;
+        _disps_[id].topic_tf = topic;
+        res.status(202);
+        return;
+    }
+    if (_disps_[id].topic_tf != topic) {
+        release_shared<rm::msg::TF>(_tf_shared, _disps_[id].topic_tf);
+        if (!_tf_shared.contains(topic))
+            _tf_shared[topic].sub =
+                this->createSubscriber<rm::msg::TF>(topic, [this, topic](const rm::msg::TF &msg) {
+                    _tf_shared[topic].cache = msg;
+                    _tf_shared[topic].received = true;
+                });
+        _tf_shared[topic].count++;
+        _disps_[id].topic_tf = topic;
+        res.status(202);
+        return;
+    }
+    if (!_tf_shared.contains(topic) || !_tf_shared[topic].received) {
+        res.status(404);
+        return;
+    }
+    const auto &cache = _tf_shared[topic].cache;
     res.json(json_array(cache.transforms, [](const rm::msg::TransformStamped &t) -> rm::basic_json<> {
         return {
             {"frame_id", t.header.frame_id},
@@ -315,7 +361,26 @@ void BackendNode::get_robotmodel_tf(const rm::Request &req, rm::Response &res) {
     }));
 }
 
-void BackendNode::delete_robotmodel(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH2(robotmodel, urdf, URDF, tf, TF); }
+void BackendNode::delete_robotmodel(const rm::Request &req, rm::Response &res) {
+    const std::string uuid = req.query.at("uuid");
+    std::string id = urldecode(req.query.at("id"));
+    if (id.empty()) {
+        res.status(400);
+        return;
+    }
+    auto &_disps_ = _robotmodel_displays[uuid];
+    auto it = _disps_.find(id);
+    if (it == _disps_.end()) {
+        res.status(404);
+        return;
+    }
+    if (!it->second.topic_urdf.empty())
+        release_shared<rm::msg::URDF>(_robotmodel_urdf_shared, it->second.topic_urdf);
+    if (!it->second.topic_tf.empty())
+        release_shared<rm::msg::TF>(_tf_shared, it->second.topic_tf);
+    _disps_.erase(it);
+    res.status(204);
+}
 
 #ifdef __MSVC__
 #pragma endregion

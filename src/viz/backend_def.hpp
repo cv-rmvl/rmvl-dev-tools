@@ -139,30 +139,6 @@
 
 // ========================= 双类型显示宏（2 个子订阅） =========================
 
-#define LVIZ_MANAGE_REGISTER2_(name, name1, sub_type1, cache_type1, name2, sub_type2, cache_type2)        \
-    struct name##Display {                                                                                \
-        std::string topic_##name1{};                                                                      \
-        std::string topic_##name2{};                                                                      \
-    };                                                                                                    \
-    std::unordered_map<std::string, std::unordered_map<std::string, name##Display>> _##name##_displays{}; \
-    struct name##_##name1##Shared {                                                                       \
-        rm::lpss::async::Subscriber<rm::msg::sub_type1>::ptr sub{};                                       \
-        cache_type1 cache{};                                                                              \
-        size_t count{0};                                                                                  \
-        bool received{false};                                                                             \
-    };                                                                                                    \
-    std::unordered_map<std::string, name##_##name1##Shared> _##name##_##name1##_shared{};                 \
-    struct name##_##name2##Shared {                                                                       \
-        rm::lpss::async::Subscriber<rm::msg::sub_type2>::ptr sub{};                                       \
-        cache_type2 cache{};                                                                              \
-        size_t count{0};                                                                                  \
-        bool received{false};                                                                             \
-    };                                                                                                    \
-    std::unordered_map<std::string, name##_##name2##Shared> _##name##_##name2##_shared{};                 \
-    void get_##name##_##name1(const rm::Request &req, rm::Response &res);                                 \
-    void get_##name##_##name2(const rm::Request &req, rm::Response &res);                                 \
-    void delete_##name(const rm::Request &req, rm::Response &res)
-
 #define LVIZ_GET_DISPATCH2_(name, sub_name, sub_type, cache_expr)                                              \
     const std::string uuid = req.query.at("uuid");                                                             \
     const std::string id = req.query.at("id");                                                                 \
@@ -233,20 +209,6 @@
         }                                                                                                \
         _##name##_displays.erase(uuid);                                                                  \
     }
-
-/**
- * @brief 双类型显示管理与缓存结构定义，包括对应的 GET 和 DELETE 请求处理函数
- *
- * @param name 显示类型名称
- * @param name1 第一个子订阅名称
- * @param sub_type1 第一个子订阅的消息类型（去掉 rm::msg:: 前缀）
- * @param cache_type1 第一个子订阅的缓存数据类型
- * @param name2 第二个子订阅名称
- * @param sub_type2 第二个子订阅的消息类型（去掉 rm::msg:: 前缀）
- * @param cache_type2 第二个子订阅的缓存数据类型
- */
-#define LVIZ_MANAGE_REGISTER2(name, name1, sub_type1, cache_type1, name2, sub_type2, cache_type2) \
-    LVIZ_MANAGE_REGISTER2_(name, name1, sub_type1, cache_type1, name2, sub_type2, cache_type2)
 
 /**
  * @brief 注册双类型显示的 GET 和 DELETE 请求处理函数的宏
