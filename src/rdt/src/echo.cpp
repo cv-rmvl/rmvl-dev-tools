@@ -27,6 +27,7 @@
 #include <rmvlmsg/sensor/joint_state.hpp>
 #include <rmvlmsg/sensor/multi_dofjoint_state.hpp>
 
+#include <rmvlmsg/motion/joint_trajectory.hpp>
 #include <rmvlmsg/motion/tf.hpp>
 #include <rmvlmsg/motion/urdf.hpp>
 
@@ -77,6 +78,16 @@ static rm::basic_json<> twist_json(const msg::Twist &t) {
 
 static rm::basic_json<> wrench_json(const msg::Wrench &w) {
     return {{"force", vector3_json(w.force)}, {"torque", vector3_json(w.torque)}};
+}
+
+static rm::basic_json<> joint_trajectory_point_json(const msg::JointTrajectoryPoint &p) {
+    return {
+        {"positions", p.positions},
+        {"velocities", p.velocities},
+        {"accelerations", p.accelerations},
+        {"effort", p.effort},
+        {"time_from_start", p.time_from_start},
+    };
 }
 
 template <typename Range, typename Fn>
@@ -138,6 +149,11 @@ void LpssTool::echo(std::string_view topic, std::string_view msgtype, EchoCallba
                              {"data_size", m.data.size()},
                              {"mesh_path", m.mesh_path},
                          });
+    LPSS_ECHO_CASE(JointTrajectory, {
+                                        {"header", header_json(m.header)},
+                                        {"joint_names", m.joint_names},
+                                        {"points", json_array(m.points, joint_trajectory_point_json)},
+                                    });
     fmt::println("\033[33mUnsupported message type: {}\033[0m", msgtype);
 }
 

@@ -1,3 +1,8 @@
+1.0.5-260320
+
+- LViz 增加 Trajectory 支持
+- lpss topic echo 支持 JointTrajectory 消息的输出
+
 1.0.4-260312
 
 - LViz 支持同时显示 TF 和 RobotModel

@@ -17,6 +17,7 @@
 
 #include <rmvlmsg/geometry/twist.hpp>
 #include <rmvlmsg/geometry/wrench.hpp>
+#include <rmvlmsg/motion/joint_trajectory.hpp>
 #include <rmvlmsg/motion/tf.hpp>
 #include <rmvlmsg/motion/urdf.hpp>
 #include <rmvlmsg/viz/marker_array.hpp>
@@ -55,22 +56,25 @@ private:
     LVIZ_MANAGE_REGISTER(marker, Marker, rm::msg::Marker);
     // MarkerArray: viz/MarkerArray
     LVIZ_MANAGE_REGISTER(marker_array, MarkerArray, rm::msg::MarkerArray);
-    // RobotModel: motion/TF, motion/URDF
+    // Trajectory: motion/JointTrajectory
+    LVIZ_MANAGE_REGISTER(trajectory, JointTrajectory, rm::msg::JointTrajectory);
+    
+    // RobotModel (Only TF managed here)
     struct robotmodelDisplay {
-        std::string topic_urdf{};
-        std::string topic_tf{};
+        std::string topic{};
     };
     std::unordered_map<std::string, std::unordered_map<std::string, robotmodelDisplay>> _robotmodel_displays{};
-    struct robotmodel_urdfShared {
+    void get_robotmodel(const rm::Request &req, rm::Response &res);
+    void delete_robotmodel(const rm::Request &req, rm::Response &res);
+
+    // URDF (Public Resource)
+    struct urdfShared {
         rm::lpss::async::Subscriber<rm::msg::URDF>::ptr sub{};
         rm::msg::URDF cache{};
-        size_t count{0};
         bool received{false};
     };
-    std::unordered_map<std::string, robotmodel_urdfShared> _robotmodel_urdf_shared{};
-    void get_robotmodel_urdf(const rm::Request &req, rm::Response &res);
-    void get_robotmodel_tf(const rm::Request &req, rm::Response &res);
-    void delete_robotmodel(const rm::Request &req, rm::Response &res);
+    std::unordered_map<std::string, urdfShared> _urdf_shared{};
+    void get_urdf(const rm::Request &req, rm::Response &res);
 
     /**
      * @brief 释放共享订阅，减少引用计数，如果计数归零则销毁订阅者并清除缓存

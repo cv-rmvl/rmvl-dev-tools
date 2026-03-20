@@ -37,6 +37,7 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
     app.get("/topics", std::bind(&BackendNode::get_topics, this, std::placeholders::_1, std::placeholders::_2));
     app.post("/cleanup", std::bind(&BackendNode::get_cleanup, this, std::placeholders::_1, std::placeholders::_2));
     app.get("/mesh", std::bind(&BackendNode::get_mesh, this, std::placeholders::_1, std::placeholders::_2));
+    app.get("/urdf", std::bind(&BackendNode::get_urdf, this, std::placeholders::_1, std::placeholders::_2));
 
     LVIZ_REQUEST_REGISTER(point);
     LVIZ_REQUEST_REGISTER(pose);
@@ -46,7 +47,8 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
     LVIZ_REQUEST_REGISTER(tf);
     LVIZ_REQUEST_REGISTER(marker);
     LVIZ_REQUEST_REGISTER(marker_array);
-    LVIZ_REQUEST_REGISTER2(robotmodel, urdf, tf);
+    LVIZ_REQUEST_REGISTER(trajectory);
+    LVIZ_REQUEST_REGISTER(robotmodel);
 
     app.listen(PORT, []() {
         auto duration = rm::Time::now_us() - gtime;
