@@ -6,7 +6,7 @@ using namespace std::literals;
 namespace rdt {
 
 static bool is_same_node(lpss::Guid g1, lpss::Guid g2) {
-    return g1.fields.host == g2.fields.host && g1.fields.pid == g2.fields.pid;
+    return g1.host() == g2.host() && g1.pid() == g2.pid();
 }
 
 std::vector<node> LpssTool::info() const {

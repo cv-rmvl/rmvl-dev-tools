@@ -74,7 +74,31 @@ function _lpss_completion() {
 
   case "${subcommand}" in
     create)
-      COMPREPLY=()
+      local create_opts="--deps --exts --cpp"
+
+      if [[ $COMP_CWORD -eq 2 ]]; then
+        COMPREPLY=($(compgen -W "$create_opts" -- $cur))
+        return 0
+      fi
+
+      case "$prev" in
+        --deps)
+          COMPREPLY=()
+          return 0
+          ;;
+        --exts)
+          COMPREPLY=()
+          return 0
+          ;;
+        --cpp)
+          COMPREPLY=($(compgen -W "17 20 23" -- $cur))
+          return 0
+          ;;
+      esac
+
+      if [[ "$cur" == --* ]]; then
+        COMPREPLY=($(compgen -W "$create_opts" -- $cur))
+      fi
       return 0
       ;;
     node)
@@ -89,9 +113,9 @@ function _lpss_completion() {
       ;;
     topic)
       if [[ $COMP_CWORD -eq 2 ]]; then
-        local opts="help info list echo type hz bw"
+        local opts="help info list echo pub type hz bw"
         COMPREPLY=($(compgen -W "$opts" -- $cur))
-      elif [[ $COMP_CWORD -eq 3 && "$prev" =~ ^(info|echo|type|hz|bw)$ ]]; then
+      elif [[ $COMP_CWORD -eq 3 && "$prev" =~ ^(info|echo|pub|type|hz|bw)$ ]]; then
         local list=$(lpss $subcommand list 2>/dev/null)
         COMPREPLY=($(compgen -W "$list" -- $cur))
       fi

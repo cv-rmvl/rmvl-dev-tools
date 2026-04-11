@@ -3,11 +3,12 @@
 set -eu
 
 function usage() {
-  echo "用法: lpss topic [help | info | list | echo | type]"
+  echo "用法: lpss topic [help | info | list | echo | pub | type]"
   echo "   help:    显示此帮助信息"
   echo "   info:    显示话题信息"
   echo "   list:    列出所有话题"
   echo "   echo:    显示话题内容"
+  echo "   pub:     发布话题"
   echo "   type:    显示话题类型"
   echo "   hz:      每秒测量一次话题发布频率，单位为 Hz"
   echo "   bw:      每秒测量一次话题带宽，单位为 MB/s、kB/s 或 B/s"
@@ -37,6 +38,12 @@ function topic_list() {
   $cur_dir/_autogen_lpss_tool tl
 }
 
+function topic_pub() {
+
+
+  
+}
+
 case $mode in
   help)
     usage
@@ -49,6 +56,9 @@ case $mode in
     ;;
   echo)
     topic_with_name te echo "$@"
+    ;;
+  pub)
+    topic_pub "$@"
     ;;
   type)
     topic_with_name tt type "$@"
