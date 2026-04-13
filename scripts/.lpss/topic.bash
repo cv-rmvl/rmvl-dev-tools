@@ -39,9 +39,7 @@ function topic_list() {
 }
 
 function topic_pub() {
-
-
-  
+  echo "" 
 }
 
 case $mode in
