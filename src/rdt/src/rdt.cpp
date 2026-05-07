@@ -30,12 +30,12 @@ std::vector<node> LpssTool::info() const {
             auto *from_nd = find_node(writer_guid);
             if (!from_nd)
                 continue;
-            from_nd->pubs.emplace_back(topic_name, writer_storage.msgtype);
+            from_nd->pubs.push_back({topic_name, writer_storage.msgtype});
             if (rit != _discovered_readers.end())
                 for (const auto &[reader_guid, locator] : rit->second.readers) {
                     auto *to_nd = find_node(reader_guid);
                     if (to_nd)
-                        to_nd->subs.emplace_back(topic_name, writer_storage.msgtype);
+                        to_nd->subs.push_back({topic_name, writer_storage.msgtype});
                 }
         }
     }
@@ -47,7 +47,7 @@ std::vector<node> LpssTool::info() const {
             auto *to_nd = find_node(reader_guid);
             if (!to_nd)
                 continue;
-            to_nd->subs.emplace_back(topic_name, reader_storage.msgtype);
+            to_nd->subs.push_back({topic_name, reader_storage.msgtype});
         }
     }
 

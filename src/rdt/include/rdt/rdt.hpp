@@ -45,8 +45,8 @@ public:
     //! 获取所有已发现的话题，key 为话题名称，value 为消息类型
     std::unordered_map<std::string, std::string> topics() const;
 
-    //! 消息回调类型：(格式化消息 JSON, 紧凑序列化大小)
-    using EchoCallback = std::function<void(const std::string &, std::size_t)>;
+    //! 消息回调类型：(格式化消息 JSON)
+    using EchoCallback = std::function<void(std::string_view)>;
 
     //! 订阅指定话题，每收到一条消息时调用回调
     void echo(std::string_view topic, std::string_view msgtype, EchoCallback callback);

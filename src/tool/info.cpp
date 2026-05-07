@@ -101,8 +101,8 @@ static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
             printf("{ \"error\": \"Topic '%s' not found\"}\n", argv[2]);
             return;
         }
-        nd.echo(argv[2], it->second, [](const std::string &msg, std::size_t) {
-            printf("%s\n", msg.c_str());
+        nd.echo(argv[2], it->second, [](std::string_view msg) {
+            printf("%s\n", msg.data());
         });
 #ifdef _Win32
         Sleep(INFINITE);
@@ -119,7 +119,7 @@ static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
             return;
         }
         uint64_t count = 0;
-        nd.echo(argv[2], it->second, [&count](const std::string &, std::size_t) { ++count; });
+        nd.echo(argv[2], it->second, [&count](std::string_view) { ++count; });
         uint64_t last_count = 0;
         while (true) {
             std::this_thread::sleep_for(1s);
@@ -136,8 +136,8 @@ static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
             return;
         }
         uint64_t total_bytes = 0;
-        nd.echo(argv[2], it->second, [&total_bytes](const std::string &, std::size_t sz) {
-            total_bytes += sz;
+        nd.echo(argv[2], it->second, [&total_bytes](std::string_view msg) {
+            total_bytes += msg.size();
         });
         uint64_t last_bytes = 0;
         while (true) {
