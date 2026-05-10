@@ -198,7 +198,9 @@ void BackendNode::get_cleanup(const rm::Request &req, rm::Response &res) {
     LVIZ_CLEANUP_DISPATCH(pose, Pose, uuid);
     LVIZ_CLEANUP_DISPATCH(twist, Twist, uuid);
     LVIZ_CLEANUP_DISPATCH(wrench, Wrench, uuid);
+#ifdef HAVE_OPENCV
     LVIZ_CLEANUP_DISPATCH(image, Image, uuid);
+#endif
     LVIZ_CLEANUP_DISPATCH(tf, TF, uuid);
     LVIZ_CLEANUP_DISPATCH(marker, Marker, uuid);
     LVIZ_CLEANUP_DISPATCH(marker_array, MarkerArray, uuid);
@@ -288,6 +290,7 @@ void BackendNode::get_image(const rm::Request &req, rm::Response &res) {
     std::string_view option = req.query.at("option");
 
     std::vector<uint8_t> buf{};
+#ifdef HAVE_OPENCV
     if (option == "png") {
         cv::imencode(".png", cache, buf);
         res.send(std::string_view(reinterpret_cast<char *>(buf.data()), buf.size()));
@@ -303,6 +306,9 @@ void BackendNode::get_image(const rm::Request &req, rm::Response &res) {
     } else {
         res.status(403);
     }
+#else
+    res.status(403);
+#endif
 }
 
 void BackendNode::delete_image(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(image, Image); }

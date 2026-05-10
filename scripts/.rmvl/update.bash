@@ -2,6 +2,19 @@
 
 set -eu
 
+TMP_DIRS=()
+
+trap 'cleanup' EXIT
+cleanup() {
+  local exit_code=$?
+  for dir in "${TMP_DIRS[@]}"; do
+    if [ -d "$dir" ]; then
+      rm -rf "$dir" 2>/dev/null || true
+    fi
+  done
+  return $exit_code
+}
+
 function usage() {
   echo "用法: rmvl update [help | tool | doc | code | lib]"
   echo "   help:    显示此帮助信息"
@@ -45,6 +58,7 @@ function update_doc() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
   mkdir -p $build_ws && cd .rmvltmp
+  TMP_DIRS+=("$cur_dir/.rmvltmp")
   doc_repo=cv-rmvl.github.io
   if [ -d $doc_repo ]; then
     rm -rf $doc_repo
@@ -69,7 +83,6 @@ function update_doc() {
   git commit -m "更新 RMVL 文档 - 由 $user/rmvl-dev-tools 于 $(date +"%Y-%m-%d %H:%M:%S") 提交"
   git push origin master
 
-  rm -rf $cur_dir/.rmvltmp
   cd $cur_dir
 }
 
@@ -90,6 +103,7 @@ function update_lib() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
   mkdir -p $build_ws
+  TMP_DIRS+=("$cur_dir/.rmvltmp")
 
   # 判断是 debug 还是 release 模式
   if [ $# -ne 2 ]; then
@@ -109,7 +123,6 @@ function update_lib() {
   cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=$build_type -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)
   sudo cmake --install $build_ws
-  rm -rf $cur_dir/.rmvltmp
   echo -e "\033[32mRMVL 完成部署\033[0m"
 }
 

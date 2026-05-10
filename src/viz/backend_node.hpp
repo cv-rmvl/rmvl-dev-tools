@@ -49,7 +49,9 @@ private:
     // Wrench: geometry/Wrench
     LVIZ_MANAGE_REGISTER(wrench, Wrench, rm::msg::Wrench);
     // Image: sensor/Image
+#ifdef HAVE_OPENCV
     LVIZ_MANAGE_REGISTER(image, Image, cv::Mat);
+#endif
     // TF: motion/TF
     LVIZ_MANAGE_REGISTER(tf, TF, rm::msg::TF);
     // Marker: viz/Marker
