@@ -48,13 +48,14 @@ ensure_sudo() {
 }
 
 function usage() {
-  echo "用法: rmvl update [help | tool | doc | code | lib]"
-  echo "   help:    显示此帮助信息"
-  echo "   tool:    更新 rmvl-dev-tools 工具到最新版本，将自动执行 code 步骤以确保工具使用最新的 RMVL 代码"
-  echo "   doc:     执行 Doxygen 文档生成，并推送到 cv-rmvl.github.io 仓库"
-  echo "   code:    更新 RMVL 仓库至最新的 2.x 分支代码"
-  echo "   lib:     执行完整的编译安装流程以更新 RMVL 动态/静态库"
-  echo "   all:     依次执行 code 和 lib 两个步骤，即更新代码并编译安装"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update${C_RESET} ${C_DIM}[help | tool | doc | code | lib | all]${C_RESET}\n"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}   ${C_DIM}显示此帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}tool${C_RESET}   ${C_DIM}更新 rdt 工具到最新版本，并将自动更新 rmvl 代码${C_RESET}"
+  echo -e "  ${C_CYAN}doc${C_RESET}    ${C_DIM}执行 Doxygen 文档生成，并推送到 cv-rmvl.github.io 仓库${C_RESET}"
+  echo -e "  ${C_CYAN}code${C_RESET}   ${C_DIM}更新 RMVL 仓库至最新的 2.x 分支代码${C_RESET}"
+  echo -e "  ${C_CYAN}lib${C_RESET}    ${C_DIM}执行完整的编译安装流程以更新 RMVL 动态/静态库${C_RESET}"
+  echo -e "  ${C_CYAN}all${C_RESET}    ${C_DIM}依次执行 code 和 lib 两个步骤，即更新代码并编译安装${C_RESET}"
 }
 
 if [ $# -lt 1 ]; then
@@ -65,7 +66,7 @@ fi
 user=$(whoami)
 mode=$1
 
-# 更新 rmvl-dev-tools 工具
+# 更新 rdt 工具
 function update_tool() {
   ensure_sudo "更新 rdt 需要 root 权限"
 
@@ -76,14 +77,14 @@ function update_tool() {
   git pull origin master
   bash $project_dir/setup/install.bash "$root_path"
   source "$HOME/.bashrc"
-  echo -e "\033[32mrmvl-dev-tools 工具已更新到最新版本。\033[0m"
+  echo -e "${C_GREEN}rmvl-dev-tools 工具已更新到最新版本。${C_RESET}"
 }
 
 # 更新 Doxygen 文档并推送到 cv-rmvl.github.io 仓库
 function update_doc() {
   if [ $# -ne 2 ]; then
-    echo "用法: rmvl update doc <folder>"
-    echo "   folder:  文档存放的文件夹名称，例如 2.x"
+    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update doc${C_RESET} ${C_DIM}<folder>${C_RESET}"
+    echo -e "  ${C_CYAN}folder${C_RESET} ${C_DIM}文档存放的文件夹名称，例如 2.x${C_RESET}"
     exit 1
   fi
   folder_name=$2
@@ -128,7 +129,7 @@ function update_code() {
   git checkout 2.x
   git reset --hard origin/2.x
   cd $cur_dir
-  echo -e "\033[32m更新代码完成\033[0m"
+  echo -e "${C_GREEN}更新代码完成${C_RESET}"
 }
 
 # 编译安装 RMVL 库
@@ -140,8 +141,8 @@ function update_lib() {
 
   # 判断是 debug 还是 release 模式
   if [ $# -ne 2 ]; then
-    echo "用法: rmvl update lib <mode>"
-    echo "   mode:  模式名称，包括 release 和 debug"
+    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update lib${C_RESET} ${C_DIM}<mode>${C_RESET}"
+    echo -e "  ${C_CYAN}mode${C_RESET} ${C_DIM}模式名称，包括 release 和 debug${C_RESET}"
     exit 1
   fi
   if [ "$2" == "release" ]; then
@@ -159,7 +160,7 @@ function update_lib() {
   cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=$build_type -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)
   sudo cmake --install $build_ws
-  echo -e "\033[32mRMVL 完成部署\033[0m"
+  echo -e "${C_GREEN}RMVL 完成部署${C_RESET}"
 }
 
 case "$mode" in

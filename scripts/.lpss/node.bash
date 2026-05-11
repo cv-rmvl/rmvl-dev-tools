@@ -2,11 +2,16 @@
 
 set -eu
 
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$TOOLS_ROOT/setup/rdtcolor.bash"
+rdtcolor_init
+
 function usage() {
-  echo "用法: lpss node [info | list]"
-  echo "   help:    显示此帮助信息"
-  echo "   info:    显示节点信息"
-  echo "   list:    列出所有节点"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss node${C_RESET} ${C_DIM}[help | info | list]${C_RESET}"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}   ${C_DIM}显示此帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}info${C_RESET}   ${C_DIM}显示节点信息${C_RESET}"
+  echo -e "  ${C_CYAN}list${C_RESET}   ${C_DIM}列出所有节点${C_RESET}"
 }
 
 if [ $# -lt 1 ]; then
@@ -19,7 +24,7 @@ cur_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 function node_info() {
   if [ $# -lt 2 ]; then
-    echo "用法: lpss node info <node_name>"
+    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss node info${C_RESET} ${C_DIM}<node_name>${C_RESET}"
     exit 1
   fi
   node_name=$2

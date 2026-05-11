@@ -10,13 +10,13 @@ function usage() {
   echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}"
   echo ""
   echo -e "${C_BOLD}命令:${C_RESET}"
-  echo -e "  ${C_CYAN}help      ${C_DIM}显示详细帮助信息${C_RESET}"
-  echo -e "  ${C_CYAN}create    ${C_DIM}创建一个依赖 lpss 的新项目${C_RESET}"
-  echo -e "  ${C_CYAN}node      ${C_DIM}lpss 节点工具${C_RESET}"
-  echo -e "  ${C_CYAN}topic     ${C_DIM}lpss 话题工具${C_RESET}"
-  echo -e "  ${C_CYAN}interface ${C_DIM}内置消息接口查看工具${C_RESET}"
-  echo -e "  ${C_CYAN}graph     ${C_DIM}前后端分离的 lpss 节点图工具${C_RESET}"
-  echo -e "  ${C_CYAN}viz       ${C_DIM}前后端分离的 lpss 3D 可视化工具${C_RESET}"
+  echo -e "  ${C_CYAN}help        ${C_DIM}显示详细帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}create      ${C_DIM}创建一个依赖 lpss 的新项目${C_RESET}"
+  echo -e "  ${C_CYAN}node        ${C_DIM}节点 CLI 工具${C_RESET}"
+  echo -e "  ${C_CYAN}topic       ${C_DIM}话题 CLI 工具${C_RESET}"
+  echo -e "  ${C_CYAN}interface   ${C_DIM}内置消息接口查看工具${C_RESET}"
+  echo -e "  ${C_CYAN}graph       ${C_DIM}节点图工具${C_RESET}"
+  echo -e "  ${C_CYAN}viz         ${C_DIM}3D 可视化工具 LViz${C_RESET}"
 }
 
 function print_help_banner() {

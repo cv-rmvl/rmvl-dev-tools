@@ -2,13 +2,18 @@
 
 set -eu
 
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$TOOLS_ROOT/setup/rdtcolor.bash"
+rdtcolor_init
+
 function usage() {
-  echo "用法: lpss interface [help | list | group | groups | show]"
-  echo "   help:    显示此帮助信息"
-  echo "   list:    列出所有的内置消息接口"
-  echo "   group:   显示指定的消息分组包含的接口"
-  echo "   groups:  列出所有消息分组"
-  echo "   show:    显示接口详细信息"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss interface${C_RESET} ${C_DIM}[help | list | group | groups | show]${C_RESET}"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}     ${C_DIM}显示此帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}list${C_RESET}     ${C_DIM}列出所有的内置消息接口${C_RESET}"
+  echo -e "  ${C_CYAN}group${C_RESET}    ${C_DIM}显示指定的消息分组包含的接口${C_RESET}"
+  echo -e "  ${C_CYAN}groups${C_RESET}   ${C_DIM}列出所有消息分组${C_RESET}"
+  echo -e "  ${C_CYAN}show${C_RESET}     ${C_DIM}显示接口详细信息${C_RESET}"
 }
 
 if [ $# -lt 1 ]; then
@@ -116,8 +121,8 @@ case $mode in
     ;;
   group)
     if [ $# -lt 1 ]; then
-      echo "用法: lpss interface group <name>"
-      echo "   name: 消息分组名称"
+      echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss interface group${C_RESET} ${C_DIM}<name>${C_RESET}"
+      echo -e "  ${C_CYAN}name${C_RESET}   ${C_DIM}消息分组名称${C_RESET}"
       exit 1
     fi
     group_name=$1
@@ -136,8 +141,8 @@ case $mode in
     ;;
   show)
     if [ $# -lt 1 ]; then
-      echo "用法: lpss interface show <interface>"
-      echo "   interface: 消息接口名称，格式为 <group>/<interface>"
+      echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss interface show${C_RESET} ${C_DIM}<interface>${C_RESET}"
+      echo -e "  ${C_CYAN}interface${C_RESET}   ${C_DIM}消息接口名称，格式为 <group>/<interface>${C_RESET}"
       exit 1
     fi
     interface_name=$1

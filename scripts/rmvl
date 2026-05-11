@@ -7,15 +7,14 @@ source "$TOOLS_ROOT/setup/rdtcolor.bash"
 rdtcolor_init
 
 function usage() {
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}"
-  echo ""
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}\n"
   echo -e "${C_BOLD}命令:${C_RESET}"
-  echo -e "  ${C_CYAN}help      ${C_DIM}显示详细帮助信息${C_RESET}"
-  echo -e "  ${C_CYAN}create    ${C_DIM}创建一个新的 RMVL 模块${C_RESET}"
-  echo -e "  ${C_CYAN}update    ${C_DIM}更新 RMVL 或 rmvl-dev-tools 工具${C_RESET}"
-  echo -e "  ${C_CYAN}dev       ${C_DIM}开始开发 RMVL${C_RESET}"
-  echo -e "  ${C_CYAN}remove    ${C_DIM}移除 RMVL 组件${C_RESET}"
-  echo -e "  ${C_CYAN}version   ${C_DIM}显示 rmvl-dev-tools 工具版本${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}      ${C_DIM}显示详细帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}create${C_RESET}    ${C_DIM}创建一个新的 RMVL 模块${C_RESET}"
+  echo -e "  ${C_CYAN}update${C_RESET}    ${C_DIM}更新 RMVL 或 rmvl-dev-tools 工具${C_RESET}"
+  echo -e "  ${C_CYAN}dev${C_RESET}       ${C_DIM}开始开发 RMVL${C_RESET}"
+  echo -e "  ${C_CYAN}remove${C_RESET}    ${C_DIM}移除 RMVL 组件${C_RESET}"
+  echo -e "  ${C_CYAN}version${C_RESET}   ${C_DIM}显示 rmvl-dev-tools 工具版本${C_RESET}"
 }
 
 function print_help_banner() {
