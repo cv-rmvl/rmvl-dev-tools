@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -eEuo pipefail
 
 TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BASHRC="$HOME/.bashrc"
@@ -8,8 +8,12 @@ BASHRC_BACKUP="$HOME/.bashrc.rmvl.bak"
 
 TMP_DIRS=()
 BASHRC_MODIFIED=0
+UI_MODE=0
+HEADER_TITLE="RDT - the Installation Wizard for RMVL Development Tools"
 
-trap 'cleanup' EXIT
+source "$TOOLS_ROOT/setup/rdtui.bash"
+rdtui_init
+
 cleanup() {
   local exit_code=$?
   for dir in "${TMP_DIRS[@]}"; do
@@ -19,79 +23,178 @@ cleanup() {
   done
   if [ $exit_code -ne 0 ] && [ $BASHRC_MODIFIED -eq 1 ]; then
     if [ -f "$BASHRC_BACKUP" ]; then
-      echo -e "\033[33m异常退出，正在恢复 .bashrc...\033[0m"
+      log_warn "异常退出，正在恢复 .bashrc..."
       mv "$BASHRC_BACKUP" "$BASHRC" 2>/dev/null || true
     fi
   else
     rm -f "$BASHRC_BACKUP" 2>/dev/null || true
   fi
+  ui_close
   return $exit_code
 }
+
+on_interrupt() {
+  ui_break_line
+  ui_fail_footer "操作取消"
+  exit 130
+}
+
+on_error() {
+  local exit_code=$?
+  ui_fail_footer "构建失败"
+  return $exit_code
+}
+
+trap 'cleanup' EXIT
+trap 'on_interrupt' INT
+trap 'on_error' ERR
 
 MARKER_START="# >>> rmvl-dev-tools >>>"
 MARKER_END="# <<< rmvl-dev-tools <<<"
 
 CONTENT="source \"$TOOLS_ROOT/setup/setup.bash\""
 
-if [ -n "${SSH_CONNECTION:-}" ] || [ -n "${SSH_TTY:-}" ]; then
-  echo "请输入本机密码以继续安装:"
-  IFS= read -s -r password
-else
-  if command -v zenity &> /dev/null; then
-    password=$(zenity --password --title="rmvl 安装" --text="请输入本机密码以继续安装：" 2>/dev/null || true)
+root_path=""
+acquisition=""
+password=""
+build_output="quiet"
+NON_INTERACTIVE=0
+
+if [ -n "${1:-}" ]; then
+  NON_INTERACTIVE=1
+  root_path="$1"
+  acquisition="local"
+fi
+
+if [ "$NON_INTERACTIVE" -eq 0 ]; then
+  UI_MODE=1
+  ui_header "$HEADER_TITLE"
+  ui_blank
+  prompt_secret password "请输入本机密码以继续安装"
+
+  if [ -z "$password" ]; then
+    ui_fail_footer "未输入密码，无法继续安装"
+    exit 1
+  fi
+
+  if ! printf '%s\n' "$password" | sudo -S -p '' -v >/dev/null 2>&1; then
+    ui_fail_footer "sudo 验证失败"
+    exit 1
+  fi
+
+  ui_blank
+  if [ -z "$acquisition" ]; then
+    ui_select_lr acquisition "rmvl 获取方式" "自动下载" "本地路径" "auto" "local" 0
+  fi
+
+  if [ "$acquisition" = "local" ]; then
+    while true; do
+      prompt_input root_path "请输入 rmvl 的路径" "${RMVL_ROOT_:-}"
+      if [ -n "$root_path" ]; then
+        break
+      fi
+      log_error "rmvl 路径不能为空"
+    done
   else
-    echo "请输入本机密码以继续安装:"
-    IFS= read -s -r password
+    root_path="$(cd "$TOOLS_ROOT/.." && pwd)/rmvl"
+  fi
+
+  ui_blank
+  ui_select_lr build_output "构建信息显示" "简洁" "详细" "quiet" "verbose" 0
+else
+  if [ -z "$root_path" ]; then
+    log_error "root_path 为空，无法继续安装"
+    exit 1
+  fi
+
+  if [ -n "${SUDO_PASSWORD:-}" ]; then
+    password="$SUDO_PASSWORD"
+    if ! printf '%s\n' "$password" | sudo -S -p '' -v >/dev/null 2>&1; then
+      ui_fail_footer "sudo 验证失败"
+      exit 1
+    fi
+  else
+    if ! sudo -n true 2>/dev/null; then
+      ui_fail_footer "非交互模式需要已有 sudo 凭据或设置 SUDO_PASSWORD"
+      exit 1
+    fi
   fi
 fi
 
-if [ -z "$password" ]; then
-  echo -e "\n\033[31m未输入密码，无法继续安装。\033[0m"
+if [ -z "$root_path" ]; then
+  log_error "rmvl 路径为空，无法继续安装"
   exit 1
 fi
 
-if [ -n "${1:-}" ]; then
-  root_path="$1"
-  CONTENT="export RMVL_ROOT_=\"$root_path\"
-$CONTENT"
-elif [ -z "${RMVL_ROOT_:-}" ]; then
-  if [ -n "${SSH_CONNECTION:-}" ] || [ -n "${SSH_TTY:-}" ]; then
-    echo "请输入您本地的 rmvl 项目根目录路径（为空则自动克隆到当前路径）："
-    read -r root_path
-  else
-    if command -v zenity &> /dev/null; then
-      root_path=$(zenity --entry --title="rmvl 项目根目录" --text="请输入您本地的 rmvl 项目根目录路径（为空则自动克隆到当前路径）：" 2>/dev/null || true)
-    else
-      echo "请输入您本地的 rmvl 项目根目录路径（为空则自动克隆到当前路径）："
-      read -r root_path
-    fi
-  fi
-
-  if [ -z "$root_path" ]; then
-    root_path="$(cd "$TOOLS_ROOT/.." && pwd)/rmvl"
-    echo -e "\033[32m正在克隆 rmvl 项目到 $root_path...\033[0m"
-    git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
-  fi
-
-  CONTENT="export RMVL_ROOT_=\"$root_path\"
-$CONTENT"
-fi
-
-if grep -qF "$MARKER_START" "$BASHRC"; then
-  echo -e "\033[33mRMVL 配置已经存在于 $BASHRC。\033[0m"
-  root_path=$(grep -A1 "$MARKER_START" "$BASHRC" | tail -n1)
-  if [[ "$root_path" == *"export RMVL_ROOT_="* ]]; then
-    root_path=${root_path#*export RMVL_ROOT_=\"}
-    root_path=${root_path%\"}
-  else
-    if [ -n "${RMVL_ROOT_:-}" ]; then
-      root_path="$RMVL_ROOT_"
-    else
-      root_path="$(cd "$TOOLS_ROOT/.." && pwd)/rmvl"
-    fi
+if [ "$acquisition" = "local" ]; then
+  if [ ! -d "$root_path" ]; then
+    log_error "rmvl 路径不存在: $root_path"
+    exit 1
   fi
 else
-  cp "$BASHRC" "$BASHRC_BACKUP"
+  if [ -d "$root_path" ]; then
+    log_warn "检测到 rmvl 已存在，跳过克隆"
+  else
+    log_info "正在克隆 rmvl 项目到 $root_path..."
+    git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
+  fi
+fi
+
+CONTENT="export RMVL_ROOT_=\"$root_path\"
+$CONTENT"
+
+update_bashrc_block() {
+  local tmp_file
+  local skip=0
+
+  tmp_file="$(mktemp)"
+  while IFS= read -r line || [ -n "$line" ]; do
+    if [ "$line" = "$MARKER_START" ]; then
+      printf "%s\n" "$MARKER_START" >> "$tmp_file"
+      printf "%s\n" "$CONTENT" >> "$tmp_file"
+      skip=1
+      continue
+    fi
+    if [ "$line" = "$MARKER_END" ]; then
+      printf "%s\n" "$MARKER_END" >> "$tmp_file"
+      skip=0
+      continue
+    fi
+    if [ "$skip" -eq 0 ]; then
+      printf "%s\n" "$line" >> "$tmp_file"
+    fi
+  done < "$BASHRC"
+
+  mv "$tmp_file" "$BASHRC"
+}
+
+existing_root_path=""
+if [ -f "$BASHRC" ] && grep -qF "$MARKER_START" "$BASHRC"; then
+  log_warn "rdt 配置已经存在于 $BASHRC"
+  existing_root_path=$(grep -A1 "$MARKER_START" "$BASHRC" | tail -n1 || true)
+  if [[ "$existing_root_path" == *"export RMVL_ROOT_="* ]]; then
+    existing_root_path=${existing_root_path#*export RMVL_ROOT_=\"}
+    existing_root_path=${existing_root_path%\"}
+  else
+    existing_root_path=""
+  fi
+
+  if [ -z "$root_path" ] && [ -n "$existing_root_path" ]; then
+    root_path="$existing_root_path"
+  elif [ -n "$existing_root_path" ] && [ "$existing_root_path" != "$root_path" ]; then
+    log_warn "当前路径与 .bashrc 中已有的不一致，将使用当前路径构建，并更新配置"
+    if [ -f "$BASHRC" ]; then
+      cp "$BASHRC" "$BASHRC_BACKUP"
+      BASHRC_MODIFIED=1
+    fi
+    update_bashrc_block
+  fi
+else
+  if [ -f "$BASHRC" ]; then
+    cp "$BASHRC" "$BASHRC_BACKUP"
+  else
+    touch "$BASHRC"
+  fi
   BASHRC_MODIFIED=1
   {
     echo "$MARKER_START"
@@ -100,22 +203,26 @@ else
   } >> "$BASHRC"
 fi
 
-echo -e "\033[32m正在自动构建 rmvl...\033[0m"
+log_info "正在自动构建 rmvl..."
 cur_dir="$(pwd)"
 build_ws=$cur_dir/.rmvltmp/rmvl/build
 TMP_DIRS+=("$cur_dir/.rmvltmp")
 mkdir -p "$build_ws"
-cmake -S "$root_path" -B "$build_ws" -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON > /dev/null
-cmake --build "$build_ws" -j$(nproc) > /dev/null
-echo "$password" | sudo -S -p '' cmake --install "$build_ws" > /dev/null
+run_cmd cmake -S "$root_path" -B "$build_ws" -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
+run_cmd cmake --build "$build_ws" -j$(nproc)
+run_sudo_cmd cmake --install "$build_ws"
+log_success "rmvl 构建完成"
+
 unset cur_dir build_ws
 
-echo -e "\033[32m正在构建 rmvl-dev-tools...\033[0m"
-cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build_tmp" > /dev/null
-cmake --build "$TOOLS_ROOT/build_tmp" > /dev/null
+log_info "正在构建 rdt..."
+run_cmd cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build_tmp"
+run_cmd cmake --build "$TOOLS_ROOT/build_tmp"
+log_success "rdt 构建完成"
+
 for name in tool viz; do
   cp "$TOOLS_ROOT/build_tmp/lpss_$name" "$TOOLS_ROOT/scripts/.lpss/_autogen_lpss_$name"
 done
 TMP_DIRS+=("$TOOLS_ROOT/build_tmp")
 
-echo -e "\033[32m安装完成，重启终端后生效\033[0m"
+log_success "\u2714 安装完成，重启终端后生效"

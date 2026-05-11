@@ -2,22 +2,26 @@
 
 set -e
 
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$TOOLS_ROOT/setup/rdtcolor.bash"
+rdtcolor_init
+
 function usage() {
-  echo -e "\033[1m用法:\033[0m \033[36m$(basename "$0")\033[0m <command> [args...]"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}"
   echo ""
-  echo -e "\033[1m命令:\033[0m"
-  echo -e "  \033[36mhelp\033[0m      显示详细帮助信息"
-  echo -e "  \033[36mcreate\033[0m    创建一个新的 RMVL 模块"
-  echo -e "  \033[36mupdate\033[0m    更新 RMVL 或 rmvl-dev-tools 工具"
-  echo -e "  \033[36mdev\033[0m       开始开发 RMVL"
-  echo -e "  \033[36mremove\033[0m    移除 RMVL 组件"
-  echo -e "  \033[36mversion\033[0m   显示 rmvl-dev-tools 工具版本"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help      ${C_DIM}显示详细帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}create    ${C_DIM}创建一个新的 RMVL 模块${C_RESET}"
+  echo -e "  ${C_CYAN}update    ${C_DIM}更新 RMVL 或 rmvl-dev-tools 工具${C_RESET}"
+  echo -e "  ${C_CYAN}dev       ${C_DIM}开始开发 RMVL${C_RESET}"
+  echo -e "  ${C_CYAN}remove    ${C_DIM}移除 RMVL 组件${C_RESET}"
+  echo -e "  ${C_CYAN}version   ${C_DIM}显示 rmvl-dev-tools 工具版本${C_RESET}"
 }
 
 function print_help_banner() {
   local sps="      "
-  local c="\033[33;1m" # 黄色加粗
-  local r="\033[0m"    # 重置颜色
+  local c="${C_YELLOW}${C_BOLD}"
+  local r="${C_RESET}"
   
   printf "${sps}${c}╭──────────────────────────────────────────────────────────────────────────╮${r}\n"
   printf "${sps}${c}│${r} RMVL 最初是面向 RoboMaster 赛事的视觉库，现在此之上逐步完善有关基础算法、${c}│${r}\n"
@@ -27,7 +31,7 @@ function print_help_banner() {
 }
 
 if [ -z "${RMVL_ROOT_:-}" ]; then
-  echo -e "\033[31mRMVL_ROOT_ 未定义。请将 RMVL_ROOT_ 设置为 RMVL 仓库的根目录。\033[0m"
+  echo -e "\033[31mRMVL 根路径未指定，请重新执行 make install 以确保安装 rdt\033[0m"
   exit 1
 fi
 
@@ -45,10 +49,10 @@ case "$command" in
   help)
     print_help_banner
     usage
-    echo -e "\n此工具支持的根命令有: \033[33mrmvl\033[0m、\033[33mlpss\033[0m 和 \033[33mlviz\033[0m，更多信息请参考官方手册:"
-    echo -e "  用户手册: \033[32mhttps://cv-rmvl.github.io/\033[0m"
-    echo -e "  API 文档: \033[32mhttps://cv-rmvl.github.io/docs/2.x/\033[0m"
-    echo -e "  GitHub:   \033[32mhttps://github.com/cv-rmvl/rmvl\033[0m"
+    echo -e "\n此工具支持的根命令有: ${C_YELLOW}rmvl${C_RESET}、${C_YELLOW}lpss${C_RESET} 和 ${C_YELLOW}lviz${C_RESET}，更多信息请参考官方手册:"
+    echo -e "  用户手册: ${C_GREEN}https://cv-rmvl.github.io/${C_RESET}"
+    echo -e "  API 文档: ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/${C_RESET}"
+    echo -e "  GitHub:   ${C_GREEN}https://github.com/cv-rmvl/rmvl${C_RESET}"
     ;;
   create)
     "$script_dir/create.bash" "$@"

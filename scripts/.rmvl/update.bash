@@ -2,6 +2,11 @@
 
 set -eu
 
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
+UI_MODE=0
+source "$project_dir/setup/rdtui.bash"
+rdtui_init
+
 TMP_DIRS=()
 
 trap 'cleanup' EXIT
@@ -13,6 +18,33 @@ cleanup() {
     fi
   done
   return $exit_code
+}
+
+ensure_sudo() {
+  if sudo -n true 2>/dev/null; then
+    return 0
+  fi
+
+  local password=""
+  local previous_ui_mode="$UI_MODE"
+
+  UI_MODE=1
+  header=${1:-"Need Password"}
+  ui_header "$header"
+  ui_blank
+  prompt_secret password "请输入本机密码："
+  ui_close
+  UI_MODE="$previous_ui_mode"
+
+  if [ -z "$password" ]; then
+    echo "未输入密码，无法继续更新"
+    exit 1
+  fi
+
+  if ! printf '%s\n' "$password" | sudo -S -p '' -v; then
+    echo "sudo 验证失败"
+    exit 1
+  fi
 }
 
 function usage() {
@@ -32,10 +64,11 @@ fi
 
 user=$(whoami)
 mode=$1
-project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
 
 # 更新 rmvl-dev-tools 工具
 function update_tool() {
+  ensure_sudo "更新 rdt 需要 root 权限"
+
   root_path=$(echo "$RMVL_ROOT_")
   bash $project_dir/setup/uninstall.bash
   cd $project_dir
@@ -102,8 +135,8 @@ function update_code() {
 function update_lib() {
   cur_dir="$(pwd)"
   build_ws=$cur_dir/.rmvltmp/rmvl/build
-  mkdir -p $build_ws
   TMP_DIRS+=("$cur_dir/.rmvltmp")
+  mkdir -p $build_ws
 
   # 判断是 debug 还是 release 模式
   if [ $# -ne 2 ]; then
@@ -120,6 +153,9 @@ function update_lib() {
     echo "请使用 release 或 debug"
     exit 1
   fi
+
+  ensure_sudo "构建后安装 rmvl 需要 root 权限"
+
   cmake -S $RMVL_ROOT_ -B $build_ws -D CMAKE_BUILD_TYPE=$build_type -D BUILD_EXTRA=ON
   cmake --build $build_ws -j$(nproc)
   sudo cmake --install $build_ws

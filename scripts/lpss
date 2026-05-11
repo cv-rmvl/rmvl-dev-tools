@@ -2,23 +2,27 @@
 
 set -eu
 
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$TOOLS_ROOT/setup/rdtcolor.bash"
+rdtcolor_init
+
 function usage() {
-  echo -e "\033[1m用法:\033[0m \033[36m$(basename "$0")\033[0m <command> [args...]"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}"
   echo ""
-  echo -e "\033[1m命令:\033[0m"
-  echo -e "  \033[36mhelp\033[0m      显示详细帮助信息"
-  echo -e "  \033[36mcreate\033[0m    创建一个依赖 lpss 的新项目"
-  echo -e "  \033[36mnode\033[0m      lpss 节点工具"
-  echo -e "  \033[36mtopic\033[0m     lpss 话题工具"
-  echo -e "  \033[36minterface\033[0m 内置消息接口查看工具"
-  echo -e "  \033[36mgraph\033[0m     前后端分离的 lpss 节点图工具"
-  echo -e "  \033[36mviz\033[0m       前后端分离的 lpss 3D 可视化工具"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help      ${C_DIM}显示详细帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}create    ${C_DIM}创建一个依赖 lpss 的新项目${C_RESET}"
+  echo -e "  ${C_CYAN}node      ${C_DIM}lpss 节点工具${C_RESET}"
+  echo -e "  ${C_CYAN}topic     ${C_DIM}lpss 话题工具${C_RESET}"
+  echo -e "  ${C_CYAN}interface ${C_DIM}内置消息接口查看工具${C_RESET}"
+  echo -e "  ${C_CYAN}graph     ${C_DIM}前后端分离的 lpss 节点图工具${C_RESET}"
+  echo -e "  ${C_CYAN}viz       ${C_DIM}前后端分离的 lpss 3D 可视化工具${C_RESET}"
 }
 
 function print_help_banner() {
   local sps="      "
-  local c="\033[33;1m" # 黄色加粗
-  local r="\033[0m"    # 重置颜色
+  local c="${C_YELLOW}${C_BOLD}"
+  local r="${C_RESET}"
   
   printf "${sps}${c}╭──────────────────────────────────────────────────────────────────────────╮${r}\n"
   printf "${sps}${c}│${r} LPSS 是一个轻量级的发布订阅通信框架，采用去中心化设计，提供 NDP、EDP 两  ${c}│${r}\n"
@@ -41,9 +45,9 @@ case "$command" in
   help)
     print_help_banner
     usage
-    printf '\n更多信息请参考官方手册:\n'
-    printf '  使用教程: \033[32m%s\033[0m\n' "https://cv-rmvl.github.io/docs/2.x/d3/d8e/tutorial_modules_lpss.html"
-    printf '  API 文档: \033[32m%s\033[0m\n' "https://cv-rmvl.github.io/docs/2.x/d7/de3/group__lpss.html"
+    echo -e "\n更多信息请参考官方手册:"
+    echo -e "  使用教程: ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/d3/d8e/tutorial_modules_lpss.html${C_RESET}"
+    echo -e "  API 文档: ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/d7/de3/group__lpss.html${C_RESET}"
     ;;
   create)
     "$script_dir/create.bash" "$@"
