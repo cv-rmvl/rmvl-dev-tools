@@ -58,6 +58,7 @@ root_path=""
 acquisition=""
 password=""
 build_output="quiet"
+optional_deps=""
 NON_INTERACTIVE=0
 
 if [ -n "${1:-}" ]; then
@@ -97,6 +98,10 @@ if [ "$NON_INTERACTIVE" -eq 0 ]; then
     done
   else
     root_path="$(cd "$TOOLS_ROOT/.." && pwd)/rmvl"
+    ui_select_multi optional_deps "请选择可选的依赖项" \
+      "OpenCV" "opencv" \
+      "Eigen 3" "eigen3" \
+      "open62541（由 CMake 管理安装进程）" "open62541"
   fi
 
   ui_blank
@@ -115,8 +120,28 @@ else
     fi
   else
     if ! sudo -n true 2>/dev/null; then
-      ui_fail_footer "非交互模式需要已有 sudo 凭据或设置 SUDO_PASSWORD"
-      exit 1
+      if [ -t 0 ] || [ -r /dev/tty ]; then
+        previous_ui_mode="$UI_MODE"
+        UI_MODE=1
+        ui_header "需要 sudo 权限"
+        ui_blank
+        prompt_secret password "请输入本机密码以继续安装"
+        ui_close
+        UI_MODE="$previous_ui_mode"
+
+        if [ -z "$password" ]; then
+          ui_fail_footer "未输入密码，无法继续安装"
+          exit 1
+        fi
+
+        if ! printf '%s\n' "$password" | sudo -S -p '' -v >/dev/null 2>&1; then
+          ui_fail_footer "sudo 验证失败"
+          exit 1
+        fi
+      else
+        ui_fail_footer "非交互模式且无可用 TTY，无法提示密码，请设置 SUDO_PASSWORD 或先执行 sudo -v"
+        exit 1
+      fi
     fi
   fi
 fi
@@ -203,12 +228,33 @@ else
   } >> "$BASHRC"
 fi
 
+rmvl_cmake_extra_args=()
+optional_packages=()
+
+if [[ " $optional_deps " == *" opencv "* ]]; then
+  optional_packages+=("libopencv-dev")
+fi
+if [[ " $optional_deps " == *" eigen3 "* ]]; then
+  optional_packages+=("libeigen3-dev")
+fi
+if [[ " $optional_deps " == *" open62541 "* ]]; then
+  rmvl_cmake_extra_args+=("-DBUILD_OPEN62541=ON")
+fi
+
+if [ ${#optional_packages[@]} -gt 0 ]; then
+  log_info "正在安装可选依赖: ${optional_packages[*]}"
+  run_sudo_cmd apt-get update
+  run_sudo_cmd apt-get install -y "${optional_packages[@]}"
+  log_success "依赖安装完成"
+fi
+
 log_info "正在自动构建 rmvl..."
 cur_dir="$(pwd)"
 build_ws=$cur_dir/.rmvltmp/rmvl/build
 TMP_DIRS+=("$cur_dir/.rmvltmp")
 mkdir -p "$build_ws"
-run_cmd cmake -S "$root_path" -B "$build_ws" -D CMAKE_BUILD_TYPE=Release -D BUILD_EXTRA=ON
+
+run_cmd cmake -S "$root_path" -B "$build_ws" -DCMAKE_BUILD_TYPE=Release -DBUILD_EXTRA=ON "${rmvl_cmake_extra_args[@]}"
 run_cmd cmake --build "$build_ws" -j$(nproc)
 run_sudo_cmd cmake --install "$build_ws"
 log_success "rmvl 构建完成"

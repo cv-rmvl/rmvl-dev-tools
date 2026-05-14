@@ -279,6 +279,137 @@ prompt_input() {
   printf -v "$__var" "%s" "$input"
 }
 
+ui_select_multi() {
+  local __var="$1"
+  local prompt="$2"
+  shift 2
+
+  if [ $(( $# % 2 )) -ne 0 ]; then
+    log_error "ui_select_multi 选项参数不成对"
+    return 1
+  fi
+
+  local labels=()
+  local values=()
+  local selected=()
+  local count=0
+  local cursor=0
+  local key
+  local rest
+  local i
+  local last_idx
+
+  while [ $# -gt 0 ]; do
+    labels+=("$1")
+    values+=("$2")
+    shift 2
+  done
+
+  count=${#labels[@]}
+  if [ "$count" -eq 0 ]; then
+    printf -v "$__var" "%s" ""
+    return 0
+  fi
+
+  for ((i=0; i<count; i++)); do
+    selected[i]=0
+  done
+
+  echo -e "${C_CYAN}${RDTUI_PROMPT_ACTIVE}${C_RESET}  $prompt ${C_DIM}(\u2191/\u2193 切换，空格选择，a 全选，回车确认)${C_RESET}"
+  ui_cursor_hide
+  last_idx=$((count - 1))
+
+  while true; do
+    for ((i=0; i<count; i++)); do
+      local box line
+      if [ "$i" -eq "$cursor" ]; then
+        if [ "${selected[i]}" -eq 1 ]; then
+          line="${C_CYAN}${C_GREEN}\u25fc${C_RESET}${C_RESET} ${labels[i]}"
+        else
+          line="${C_CYAN}\u25fb${C_RESET} ${labels[i]}"
+        fi
+      else
+        if [ "${selected[i]}" -eq 1 ]; then
+          line="${C_DIM}${C_GREEN}\u25fc${C_RESET} ${labels[i]}${C_RESET}"
+        else
+          line="${C_DIM}\u25fb ${labels[i]}${C_RESET}"
+        fi
+      fi
+
+      printf "\r${C_DIM}${RDTUI_BOX_SIDE}${C_RESET}  %b${C_CLEAR}" "$line"
+      if [ "$i" -lt "$last_idx" ]; then
+        printf "\n"
+      fi
+    done
+    printf "\n${C_DIM}${RDTUI_BOX_BOTTOM}${C_RESET} "
+
+    IFS= read -u "$RDTUI_TTY_FD" -rsn1 key
+    if [[ -z "$key" ]]; then
+      ui_cursor_show
+      ui_prompt_done "$prompt" "$((count + 1))"
+
+      local display_text=""
+      local output=()
+      for ((i=0; i<count; i++)); do
+        if [ "${selected[i]}" -eq 1 ]; then
+          output+=("${values[i]}")
+          if [ -z "$display_text" ]; then
+            display_text="${values[i]}"
+          else
+            display_text+="${display_text:+, }${values[i]}"
+          fi
+        fi
+      done
+
+      if [ ${#output[@]} -eq 0 ]; then
+        printf -v "$__var" "%s" ""
+        display_text="none"
+      else
+        printf -v "$__var" "%s" "${output[*]}"
+      fi
+
+      printf "\033[%sA\r" "$count"
+      printf "${C_DIM}${RDTUI_BOX_SIDE}${C_RESET}  ${C_DIM}%s${C_RESET}${C_CLEAR}\n" "$display_text"
+      printf "\033[J"
+      return 0
+    fi
+
+    if [[ "$key" == $'\x1b' ]]; then
+      IFS= read -u "$RDTUI_TTY_FD" -rsn2 rest || true
+      case "$rest" in
+        "[A") cursor=$((cursor - 1)) ;;
+        "[B") cursor=$((cursor + 1)) ;;
+      esac
+    else
+      case "$key" in
+        " ") selected[cursor]=$((1 - selected[cursor])) ;;
+        a|A)
+          local all_selected=1
+          for ((i=0; i<count; i++)); do
+            if [ "${selected[i]}" -eq 0 ]; then
+              all_selected=0
+              break
+            fi
+          done
+          for ((i=0; i<count; i++)); do
+            selected[i]=$((all_selected ? 0 : 1))
+          done
+          ;;
+        k) cursor=$((cursor - 1)) ;;
+        j) cursor=$((cursor + 1)) ;;
+      esac
+    fi
+
+    if [ "$cursor" -lt 0 ]; then
+      cursor=$last_idx
+    elif [ "$cursor" -ge "$count" ]; then
+      cursor=0
+    fi
+
+    printf "\033[%sA\r" "$count"
+  done
+}
+
 ui_select_lr() {
   local __var="$1"
   local prompt="$2"

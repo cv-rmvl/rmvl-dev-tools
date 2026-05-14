@@ -83,8 +83,9 @@ function update_tool() {
 # 更新 Doxygen 文档并推送到 cv-rmvl.github.io 仓库
 function update_doc() {
   if [ $# -ne 2 ]; then
-    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update doc${C_RESET} ${C_DIM}<folder>${C_RESET}"
-    echo -e "  ${C_CYAN}folder${C_RESET} ${C_DIM}文档存放的文件夹名称，例如 2.x${C_RESET}"
+    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update doc${C_RESET} <folder>"
+    echo -e "${C_BOLD}参数:${C_RESET}"
+    echo -e "  ${C_CYAN}folder${C_RESET}   ${C_DIM}文档存放的文件夹名称，例如 2.x${C_RESET}"
     exit 1
   fi
   folder_name=$2
@@ -141,8 +142,9 @@ function update_lib() {
 
   # 判断是 debug 还是 release 模式
   if [ $# -ne 2 ]; then
-    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update lib${C_RESET} ${C_DIM}<mode>${C_RESET}"
-    echo -e "  ${C_CYAN}mode${C_RESET} ${C_DIM}模式名称，包括 release 和 debug${C_RESET}"
+    echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl update lib${C_RESET} <mode>"
+    echo -e "${C_BOLD}参数:${C_RESET}"
+    echo -e "  ${C_CYAN}mode${C_RESET}   ${C_DIM}模式名称，包括 release 和 debug${C_RESET}"
     exit 1
   fi
   if [ "$2" == "release" ]; then
