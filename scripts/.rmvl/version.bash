@@ -5,7 +5,13 @@ set -eu
 project_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 source "$project_dir/setup/rdtcolor.bash"
 rdtcolor_init
-cur_version=$(cat $project_dir/changelog.txt | head -n1)
+ver=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{6}' "$project_dir/changelog.txt" | tail -n1 || true)
+if [ -n "$ver" ]; then
+  cur_version="$ver"
+else
+  last_line=$(awk 'NF{l=$0} END{print l}' "$project_dir/changelog.txt")
+  cur_version="$last_line"
+fi
 
 if [ "${1:-}" = "log" ]; then
   echo -e "${C_BOLD}当前版本:${C_RESET} $cur_version\n"
