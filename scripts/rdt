@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$TOOLS_ROOT/setup/rdtcolor.bash"
+rdtcolor_init
+
+function usage() {
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}$(basename "$0")${C_RESET} <command> ${C_DIM}[args...]${C_RESET}\n"
+  echo -e "${C_BOLD}命令:${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}      ${C_DIM}显示详细帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}create${C_RESET}    ${C_DIM}创建一个新的 RMVL 模块${C_RESET}"
+  echo -e "  ${C_CYAN}update${C_RESET}    ${C_DIM}更新 RMVL 或 rdt 工具${C_RESET}"
+  echo -e "  ${C_CYAN}dev${C_RESET}       ${C_DIM}开始开发 RMVL${C_RESET}"
+  echo -e "  ${C_CYAN}git${C_RESET}       ${C_DIM}执行常用 Git 工作流${C_RESET}"
+  echo -e "  ${C_CYAN}remove${C_RESET}    ${C_DIM}移除 RMVL 组件${C_RESET}"
+  echo -e "  ${C_CYAN}version${C_RESET}   ${C_DIM}显示 rdt 工具版本${C_RESET}"
+}
+
+function print_help_banner() {
+  local sps="      "
+  local c="${C_YELLOW}${C_BOLD}"
+  local r="${C_RESET}"
+
+  printf "${sps}${c}╭──────────────────────────────────────────────────────────────────────────╮${r}\n"
+  printf "${sps}${c}│${r} RMVL 最初是面向 RoboMaster 赛事的视觉库，现在此之上逐步完善有关基础算法、${c}│${r}\n"
+  printf "${sps}${c}│${r} 机器视觉、通信的功能，旨在打造适用范围广、使用简洁、架构统一、功能强大的 ${c}│${r}\n"
+  printf "${sps}${c}│${r} 视觉控制一体库。本工具提供了 RMVL 相关的命令行工具，具体使用方法如下。   ${c}│${r}\n"
+  printf "${sps}${c}╰──────────────────────────────────────────────────────────────────────────╯${r}\n"
+}
+
+if [ -z "${RMVL_ROOT_:-}" ]; then
+  echo -e "\033[31mRMVL 根路径未指定，请重新执行 make install 以确保安装 rdt\033[0m"
+  exit 1
+fi
+
+if [ "$#" -lt 1 ]; then
+  usage
+  exit 1
+fi
+
+command=$1
+shift
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.rdt"
+
+case "$command" in
+  help)
+    print_help_banner
+    usage
+    echo -e "\n此工具支持的根命令有: ${C_YELLOW}rdt${C_RESET}、${C_YELLOW}lpss${C_RESET} 和 ${C_YELLOW}lviz${C_RESET}，更多信息请参考官方手册:"
+    echo -e "  用户手册: ${C_GREEN}https://cv-rmvl.github.io/${C_RESET}"
+    echo -e "  API 文档: ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/${C_RESET}"
+    echo -e "  GitHub:   ${C_GREEN}https://github.com/cv-rmvl/rmvl${C_RESET}"
+    ;;
+  create)
+    "$script_dir/create.bash" "$@"
+    ;;
+  update)
+    "$script_dir/update.bash" "$@"
+    ;;
+  dev)
+    "$script_dir/dev.bash" "$@"
+    ;;
+  git)
+    "$script_dir/git.bash" "$@"
+    ;;
+  remove)
+    "$script_dir/remove.bash" "$@"
+    ;;
+  version)
+    "$script_dir/version.bash" "$@"
+    ;;
+  *)
+    echo "未知命令: $command"
+    usage
+    exit 1
+    ;;
+esac

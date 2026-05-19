@@ -7,7 +7,7 @@ source "$TOOLS_ROOT/setup/rdtcolor.bash"
 rdtcolor_init
 
 function usage() {
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl create${C_RESET} ${C_DIM}[help | <module_name> [sub_module_1 [sub_module_2] ...]]${C_RESET}\n"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt create${C_RESET} ${C_DIM}[help | <module_name> [sub_module_1 [sub_module_2] ...]]${C_RESET}\n"
   echo -e "${C_BOLD}参数:${C_RESET}"
   echo -e "  ${C_CYAN}help${C_RESET}             ${C_DIM}显示详细的帮助信息${C_RESET}"
   echo -e "  ${C_CYAN}module_name${C_RESET}      ${C_DIM}要创建的主模块名称${C_RESET}"
@@ -21,14 +21,14 @@ fi
 
 if [ "$1" = "help" ]; then
   echo -e "${C_DIM}该命令会在当前目录下生成一个新的 RMVL 模块的基本目录结构和必要文件${C_RESET}"
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl create${C_RESET} ${C_DIM}<module_name> [sub_module_1 [sub_module_2] ...]${C_RESET}"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt create${C_RESET} ${C_DIM}<module_name> [sub_module_1 [sub_module_2] ...]${C_RESET}"
   space="                 "
   echo -e "  ${C_CYAN}module_name${C_RESET} ${C_DIM}要创建的主模块名称，在 RMVL 库中将作为一个独立的模块，核心 CMake 命令如下${C_RESET}"
   echo -e "$space${C_CYAN}rmvl_add_module${C_RESET}(\n$space  <module_name>\n$space  ${C_CYAN}DEPENDS${C_RESET} core\n$space)"
   echo -e "  ${C_CYAN}sub_module_n${C_RESET} ${C_DIM}可选的子模块名称，每个子模块也将作为一个独立的模块，核心 CMake 命令如下${C_RESET}"
   echo -e "$space${C_CYAN}foreach${C_RESET}(sub_module ${C_CYAN}\${sub_modules}${C_RESET})\n$space  ${C_CYAN}rmvl_add_module${C_RESET}("
   echo -e "$space    <sub_module>\n$space    ${C_CYAN}DEPENDS${C_RESET} <module_name>\n$space  )\n$space${C_CYAN}endforeach${C_RESET}()"
-  echo -e "${C_BOLD}示例:${C_RESET} ${C_CYAN}rmvl create my_module sub1 sub2 sub3${C_RESET}"
+  echo -e "${C_BOLD}示例:${C_RESET} ${C_CYAN}rdt create my_module sub1 sub2 sub3${C_RESET}"
   echo -e "  ${C_DIM}该命令将在当前目录下创建名为 my_module 的主模块，并包含 sub1、sub2 和 sub3 三个子模块${C_RESET}"
   exit 0
 fi

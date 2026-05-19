@@ -7,7 +7,7 @@ source "$TOOLS_ROOT/setup/rdtcolor.bash"
 rdtcolor_init
 
 function usage() {
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl remove${C_RESET} ${C_DIM}[help | tool | lib]${C_RESET}\n"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt remove${C_RESET} ${C_DIM}[help | tool | lib]${C_RESET}\n"
   echo -e "${C_BOLD}命令:${C_RESET}"
   echo -e "  ${C_CYAN}help${C_RESET}   ${C_DIM}显示此帮助信息${C_RESET}"
   echo -e "  ${C_CYAN}tool${C_RESET}   ${C_DIM}移除 rmvl-dev-tools 工具${C_RESET}"

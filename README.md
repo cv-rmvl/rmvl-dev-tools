@@ -11,9 +11,7 @@ make install
 ```
 
 > [!tip]
-> 过程中可能会弹出输入 `RMVL_ROOT_` 的提示，请输入您本地 RMVL 仓库的绝对路径，例如 `/home/user/cv-rmvl/rmvl`，路径因人而异，请根据实际情况填写。
->
-> 如果系统中还未安装 rmvl，推荐不输入任何内容直接确定，安装脚本会自动为您安装 rmvl。
+> 请根据提示完成安装即可！
 
 安装时会自动更新最新的 rmvl 代码库，以便于使用诸如 lpss 之类的工具。
 
@@ -27,22 +25,24 @@ make uninstall
 
 ### 使用说明
 
-安装完成后，您可以在任意一个位置打开终端，通过在终端中输入 `rmvl` 来访问这些工具。当您不知道要输入什么时，输入
+安装完成后，您可以在任意一个位置打开终端，通过在终端中输入 `rdt` 来访问这些工具。当您不知道要输入什么时，输入
 
 ```bash
-rmvl help
+rdt help
 ```
 
 就能知道有哪些可用的命令！对于其他功能，这里只做简短的描述，例如可以输入以下命令来使用 Visual Studio Code 打开 RMVL 项目
 
+旧的 `rmvl` 入口仍会保留，但仅用于提示弃用，不再执行任何子命令。
+
 ```bash
-rmvl dev code
+rdt dev code
 ```
 
 输入以下命令来更新 RMVL 代码库。
 
 ```bash
-rmvl update code
+rdt update code
 ```
 
 > [!tip]

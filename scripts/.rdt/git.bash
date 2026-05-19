@@ -7,14 +7,19 @@ source "$TOOLS_ROOT/setup/rdtui.bash"
 rdtui_init
 
 function usage() {
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rmvl dev${C_RESET} ${C_DIM}[help | code | nvim | dir | commit | squash]${C_RESET}\n"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt git${C_RESET} ${C_DIM}[help | commit | squash]${C_RESET}\n"
   echo -e "${C_BOLD}命令:${C_RESET}"
-  echo -e "  ${C_CYAN}help${C_RESET}   ${C_DIM}显示此帮助信息${C_RESET}"
-  echo -e "  ${C_CYAN}code${C_RESET}   ${C_DIM}在 Visual Studio Code 中打开本地 RMVL${C_RESET}"
-  echo -e "  ${C_CYAN}nvim${C_RESET}   ${C_DIM}在 Neovim 中打开本地 RMVL${C_RESET}"
-  echo -e "  ${C_CYAN}dir${C_RESET}    ${C_DIM}Linux 上使用 nautilus 打开本地 RMVL${C_RESET}"
-  echo -e "  ${C_CYAN}commit${C_RESET} ${C_DIM}执行 'git add . && git commit' 提交本地的更改${C_RESET}"
-  echo -e "  ${C_CYAN}squash${C_RESET} ${C_DIM}创建临时提交并压缩至上一个提交${C_RESET}"
+  echo -e "  ${C_CYAN}help${C_RESET}     ${C_DIM}显示此帮助信息${C_RESET}"
+  echo -e "  ${C_CYAN}commit${C_RESET}   ${C_DIM}执行 '${C_ITALIC}git add . && git commit${C_RESET}${C_DIM}' 提交本地的更改${C_RESET}"
+  echo -e "  ${C_CYAN}squash${C_RESET}   ${C_DIM}创建临时提交并压缩至上一个提交${C_RESET}"
+}
+
+function ui_dim_output() {
+  local line
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    printf "%b%s%b\n" "$C_DIM" "$line" "$C_RESET"
+  done | ui_prefix_output
 }
 
 if [ $# -ne 1 ]; then
@@ -22,7 +27,7 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-function dev_commit() {
+function git_commit() {
   local commit_type=""
   local scope=""
   local subject=""
@@ -71,10 +76,10 @@ function dev_commit() {
 
   ui_blank
   ui_info "提交消息:"
-  printf "${C_DIM}%s${C_RESET}\n" "$commit_title" | ui_prefix_output
+  printf "%s\n" "$commit_title" | ui_dim_output
   if [ -n "$body" ]; then
     ui_blank
-    printf "${C_DIM}%s${C_RESET}\n" "$body" | ui_prefix_output
+    printf "%s\n" "$body" | ui_dim_output
   fi
 
   ui_select_lr confirm "确认提交？" "提交" "取消" "yes" "no" 0
@@ -108,7 +113,7 @@ function dev_commit() {
   ui_close
 }
 
-function dev_squash() {
+function git_squash() {
   local confirm=""
   local previous_build_output="${build_output:-quiet}"
   local last_commit=""
@@ -135,13 +140,13 @@ function dev_squash() {
   ui_header "将自动创建临时提交并压缩至上一次提交，同时保留上一次提交的消息"
   ui_blank
   ui_info "上一个 commit:"
-  printf "${C_DIM}%s${C_RESET}\n" "$last_commit" | ui_prefix_output
+  printf "%s\n" "$last_commit" | ui_dim_output
   ui_blank
   ui_info "将执行:"
-  printf "${C_DIM}%s${C_RESET}\n" "  git add ." | ui_prefix_output
-  printf "${C_DIM}%s${C_RESET}\n" "  git commit -m \"$tmp_message\"" | ui_prefix_output
-  printf "${C_DIM}%s${C_RESET}\n" "  git reset --soft HEAD~1" | ui_prefix_output
-  printf "${C_DIM}%s${C_RESET}\n\n" "  git commit --amend --no-edit" | ui_prefix_output
+  printf "%s\n" "  git add ." | ui_dim_output
+  printf "%s\n" "  git commit -m \"$tmp_message\"" | ui_dim_output
+  printf "%s\n" "  git reset --soft HEAD~1" | ui_dim_output
+  printf "%s\n\n" "  git commit --amend --no-edit" | ui_dim_output
 
   ui_select_lr confirm "确认压缩？" "执行" "取消" "yes" "no" 0
   if [ "$confirm" != "yes" ]; then
@@ -192,32 +197,11 @@ case "$mode" in
   help)
     usage
     ;;
-  code)
-    if ! command -v code &> /dev/null; then
-      echo -e "${C_RED}Visual Studio Code 未安装或 'code' 命令在 PATH 中不可用。${C_RESET}"
-      exit 1
-    fi
-    code "$RMVL_ROOT_"
-    ;;
-  nvim)
-    if ! command -v nvim &> /dev/null; then
-      echo -e "${C_RED}Neovim 未安装或 'nvim' 命令在 PATH 中不可用。${C_RESET}"
-      exit 1
-    fi
-    nvim "$RMVL_ROOT_"
-    ;;
-  dir)
-    if ! command -v nautilus &> /dev/null; then
-      echo -e "${C_RED}Nautilus 文件管理器未安装或 'nautilus' 命令在 PATH 中不可用。${C_RESET}"
-      exit 1
-    fi
-    nautilus "$RMVL_ROOT_"
-    ;;
   commit)
-    dev_commit
+    git_commit
     ;;
   squash)
-    dev_squash
+    git_squash
     ;;
   *)
     usage

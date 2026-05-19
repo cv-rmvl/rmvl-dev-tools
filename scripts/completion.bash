@@ -1,13 +1,13 @@
 #!/bin/bash
 
-function _rmvl_completion() {
+function _rdt_completion() {
   local cur prev commands
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
     
   # Top level commands
-  commands="help create update dev remove version"
+  commands="help create update dev git remove version"
 
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
@@ -35,8 +35,13 @@ function _rmvl_completion() {
       return 0
       ;;
     dev)
-      local dev_opts="help code nvim dir commit squash"
+      local dev_opts="help code nvim dir"
       COMPREPLY=( $(compgen -W "${dev_opts}" -- ${cur}) )
+      return 0
+      ;;
+    git)
+      local git_opts="help commit squash"
+      COMPREPLY=( $(compgen -W "${git_opts}" -- ${cur}) )
       return 0
       ;;
     remove)
@@ -141,7 +146,11 @@ function _lpss_completion() {
   esac
 }
 
+function _rmvl_completion() {
+  _rdt_completion
+}
+
 # Register the completion function for the command
-for cmd in rmvl lpss; do
-  complete -F _${cmd}_completion $cmd
-done
+complete -F _rdt_completion rdt
+complete -F _rmvl_completion rmvl
+complete -F _lpss_completion lpss
