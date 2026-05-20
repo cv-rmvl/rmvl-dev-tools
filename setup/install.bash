@@ -271,4 +271,4 @@ for name in tool viz; do
 done
 TMP_DIRS+=("$TOOLS_ROOT/build_tmp")
 
-log_success "\u2714 安装完成，重启终端后生效"
+log_success $'\u2714 安装完成，重启终端后生效'
