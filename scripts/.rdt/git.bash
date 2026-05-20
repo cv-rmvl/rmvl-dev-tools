@@ -65,7 +65,9 @@ function collect_commit_message() {
   local scope=""
   local subject=""
   local body=""
-  local newline=$'\n'
+  local body_item=""
+  local body_index=1
+  local body_line=""
   local confirm=""
   local commit_title=""
 
@@ -84,8 +86,21 @@ function collect_commit_message() {
       log_error "提交摘要不能为空"
     fi
   done
-  prompt_input body "请输入详细说明（可选，使用 \\\\ 表示换行）"
-  body="${body//\\\\/$newline}"
+  while true; do
+    body_item=""
+    prompt_input body_item "请输入第 ${body_index} 条详细说明（可选）"
+    if [ -z "$body_item" ]; then
+      break
+    fi
+
+    body_line="${body_index}. $body_item"
+    if [ -n "$body" ]; then
+      body="${body}"$'\n'"${body_line}"
+    else
+      body="$body_line"
+    fi
+    body_index=$((body_index + 1))
+  done
 
   if [ -n "$scope" ]; then
     commit_title="$commit_type($scope): $subject"
