@@ -111,3 +111,7 @@
 
 - rmvl 工具正式更名为 rdt，旧 rmvl 入口保留但仅用于提示弃用
 - 增加 rdt git 工具，包含 commit、squash、reword、newbr 子命令
+
+1.1.0-260524
+
+- 优化 rdt remove 的输出样式

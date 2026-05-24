@@ -161,7 +161,7 @@ else
     log_warn "检测到 rmvl 已存在，跳过克隆"
   else
     log_info "正在克隆 rmvl 项目到 $root_path..."
-    git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
+    run_cmd git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
   fi
 fi
 
