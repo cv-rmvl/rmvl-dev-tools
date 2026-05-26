@@ -115,3 +115,10 @@
 1.1.0-260524
 
 - 优化 rdt remove 的输出样式
+
+1.1.1-260525
+
+- 增加 Windows 原生 PowerShell 入口、安装、卸载与命令补全脚本，将自动补全加入用户 PROFILE，并为 Windows 用户在根目录增加 bat 快捷入口
+- 修复 LViz 异步接口与无 OpenCV 构建的兼容问题
+- 修复 Windows 下 `lpss_tool` 引用 Unix 头文件导致的构建失败
+- 脚本按 `bash`、`ps` 分目录管理，并保留旧版升级所需的安装桥接入口

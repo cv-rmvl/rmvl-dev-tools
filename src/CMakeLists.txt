@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 project(RMVLDevTools LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>" "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/viz/runtime/path_config.hpp.in

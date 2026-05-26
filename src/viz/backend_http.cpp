@@ -9,11 +9,15 @@
  *
  */
 
-#include <cstdio>
+#include <rmvl/rmvl_modules.hpp>
+
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include <opencv2/imgcodecs.hpp>
 #include <rmvlmsg/motion/urdf.hpp>
+
+#ifdef HAVE_OPENCV
+#include <opencv2/imgcodecs.hpp>
+#endif
 
 #include "backend_def.hpp"
 #include "backend_node.hpp"
@@ -284,13 +288,13 @@ void BackendNode::get_twist(const rm::Request &req, rm::Response &res) {
 
 void BackendNode::delete_twist(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(twist, Twist); }
 
+#ifdef HAVE_OPENCV
 void BackendNode::get_image(const rm::Request &req, rm::Response &res) {
     LVIZ_GET_DISPATCH(image, Image, rm::cvmsg::from_msg(msg));
 
     std::string_view option = req.query.at("option");
 
     std::vector<uint8_t> buf{};
-#ifdef HAVE_OPENCV
     if (option == "png") {
         cv::imencode(".png", cache, buf);
         res.send(std::string_view(reinterpret_cast<char *>(buf.data()), buf.size()));
@@ -306,12 +310,10 @@ void BackendNode::get_image(const rm::Request &req, rm::Response &res) {
     } else {
         res.status(403);
     }
-#else
-    res.status(403);
-#endif
 }
 
 void BackendNode::delete_image(const rm::Request &req, rm::Response &res) { LVIZ_DELETE_DISPATCH(image, Image); }
+#endif
 
 void BackendNode::get_tf(const rm::Request &req, rm::Response &res) {
     LVIZ_GET_DISPATCH(tf, TF, msg);

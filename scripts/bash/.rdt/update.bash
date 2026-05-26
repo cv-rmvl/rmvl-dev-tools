@@ -2,9 +2,9 @@
 
 set -eu
 
-project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../../.. && pwd)"
 UI_MODE=0
-source "$project_dir/setup/rdtui.bash"
+source "$project_dir/setup/bash/rdtui.bash"
 rdtui_init
 
 TMP_DIRS=()
@@ -71,11 +71,11 @@ function update_tool() {
   ensure_sudo "更新 rdt 需要 root 权限"
 
   root_path=$(echo "$RMVL_ROOT_")
-  bash $project_dir/setup/uninstall.bash
+  bash $project_dir/setup/bash/uninstall.bash
   cd $project_dir
   git checkout master
   git pull origin master
-  bash $project_dir/setup/install.bash "$root_path"
+  bash $project_dir/setup/bash/install.bash "$root_path"
   source "$HOME/.bashrc"
   echo -e "${C_GREEN}rmvl-dev-tools 工具已更新到最新版本。${C_RESET}"
 }

@@ -2,8 +2,8 @@
 
 set -e
 
-TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-source "$TOOLS_ROOT/setup/rdtcolor.bash"
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$TOOLS_ROOT/setup/bash/rdtcolor.bash"
 rdtcolor_init
 
 warn_message="自 ${C_YELLOW}1.1.0-260520${C_RESET} 版本起，${C_YELLOW}rmvl${C_RESET} 命令行工具已弃用，并已全部转移至 ${C_YELLOW}rdt${C_RESET}\n请改用:\n   "

@@ -2,7 +2,7 @@
 
 #############################################################################
 #  基础用法:
-#    source "$TOOLS_ROOT/setup/rdtui.bash"
+#    source "$TOOLS_ROOT/setup/bash/rdtui.bash"
 #    UI_MODE=1  # 1: 使用边框式交互界面，0: 普通文本输出
 #    rdtui_init # 初始化 UI
 #

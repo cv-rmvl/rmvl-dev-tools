@@ -2,8 +2,8 @@
 
 set -eu
 
-TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$TOOLS_ROOT/setup/rdtui.bash"
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+source "$TOOLS_ROOT/setup/bash/rdtui.bash"
 rdtui_init
 RDT_REMOVE_UI_OPEN=0
 
@@ -29,7 +29,7 @@ if [ $# -lt 1 ]; then
 fi
 
 mode=$1
-project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
+project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../../.. && pwd)"
 
 function read_rmvl_root() {
   local root="${RMVL_ROOT_:-}"
@@ -91,7 +91,7 @@ function remove_tool() {
 
   if [ "$remove_rdt" = "yes" ]; then
     log_info "正在执行 uninstall.bash..."
-    bash "$project_dir/setup/uninstall.bash" 2>&1 | ui_prefix_output
+    bash "$project_dir/setup/bash/uninstall.bash" 2>&1 | ui_prefix_output
     local uninstall_status=${PIPESTATUS[0]}
     if [ "$uninstall_status" -ne 0 ]; then
       ui_close

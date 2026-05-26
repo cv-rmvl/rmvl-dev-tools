@@ -1,6 +1,10 @@
 #include "rdt/rdt.hpp"
 #include <string>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 using namespace rm;
 using namespace std::literals;
@@ -104,7 +108,7 @@ static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
         nd.echo(argv[2], it->second, [](std::string_view msg) {
             printf("%s\n", msg.data());
         });
-#ifdef _Win32
+#ifdef _WIN32
         Sleep(INFINITE);
 #else
         pause();

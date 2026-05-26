@@ -43,7 +43,9 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
     LVIZ_REQUEST_REGISTER(pose);
     LVIZ_REQUEST_REGISTER(wrench);
     LVIZ_REQUEST_REGISTER(twist);
+#ifdef HAVE_OPENCV
     LVIZ_REQUEST_REGISTER(image);
+#endif
     LVIZ_REQUEST_REGISTER(tf);
     LVIZ_REQUEST_REGISTER(marker);
     LVIZ_REQUEST_REGISTER(marker_array);

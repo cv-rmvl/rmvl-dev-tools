@@ -2,8 +2,8 @@
 
 set -eu
 
-project_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-source "$project_dir/setup/rdtcolor.bash"
+project_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+source "$project_dir/setup/bash/rdtcolor.bash"
 rdtcolor_init
 ver=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{6}' "$project_dir/changelog.txt" | tail -n1 || true)
 if [ -n "$ver" ]; then

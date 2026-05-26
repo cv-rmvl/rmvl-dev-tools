@@ -1,7 +1,7 @@
 @PHONY: install uninstall
 
 install:
-	bash setup/install.bash
+	bash setup/bash/install.bash
 
 uninstall:
-	bash setup/uninstall.bash
+	bash setup/bash/uninstall.bash

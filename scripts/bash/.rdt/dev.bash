@@ -2,8 +2,8 @@
 
 set -eu
 
-TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$TOOLS_ROOT/setup/rdtui.bash"
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+source "$TOOLS_ROOT/setup/bash/rdtui.bash"
 rdtui_init
 
 function usage() {

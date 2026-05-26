@@ -2,8 +2,8 @@
 
 set -e
 
-TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-source "$TOOLS_ROOT/setup/rdtcolor.bash"
+TOOLS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$TOOLS_ROOT/setup/bash/rdtcolor.bash"
 rdtcolor_init
 
 function usage() {

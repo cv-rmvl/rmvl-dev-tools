@@ -1,8 +1,8 @@
 ## RMVL 快捷开发工具
 
-这是 RMVL 项目中的一组 Bash 脚本，旨在简化和加速 RMVL 项目的开发流程。通过这些脚本，开发者可以轻松地创建新模块、更新代码库以及生成项目文档。
+这是 RMVL 项目中的一组开发工具，旨在简化和加速 RMVL 项目的开发流程。Linux 入口与配置位于 `scripts/bash`、`setup/bash`，Windows PowerShell 入口与配置位于 `scripts/ps`、`setup/ps`。
 
-### 安装
+### Linux/Bash 用户安装
 
 在终端中打开本项目，执行以下内容
 
@@ -15,12 +15,30 @@ make install
 
 安装时会自动更新最新的 rmvl 代码库，以便于使用诸如 lpss 之类的工具。
 
+### Windows/Powershell 用户安装
+
+双击 `install.bat` 或者在 PowerShell 中执行 `.\install.bat` 来启动安装向导。
+
+自动化或重装场景仍可使用 `install.bat -RootPath C:\path\to\rmvl` 或 `install.bat -Clone`；仅配置 `rdt` 入口而跳过 RMVL 构建时，追加 `-SkipBuild`。由于入口为 PowerShell 脚本，直接以 `rdt` 调用前需要允许执行本地脚本，例如：
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
 ### 卸载
 
 若不再需要这些工具，可以通过以下命令卸载：
 
+Bash 用户使用：
+
 ```bash
 make uninstall
+```
+
+PowerShell 用户使用：
+
+```bat
+uninstall.bat
 ```
 
 ### 使用说明
@@ -46,9 +64,9 @@ rdt update code
 ```
 
 > [!tip]
-> 值得一提的是，rmvl-dev-tools 基于 Bash 脚本开发，其所有命令都支持 Tab 补全，当您不知道输入什么，又不想输入 `help` 的时候，可以尝试使用 Tab 键盘按键进行代码补全的提示。
+> Bash 入口支持 Tab 补全；PowerShell 安装会自动将 `setup/ps/setup.ps1` 加入用户 `PROFILE`，启用 `rdt` 与 `lpss` 的命令补全。
 >
-> 祝您使用愉快 :)
+> Bash 与 Windows PowerShell 入口均支持 `rdt`、`lpss` 与 `lviz`。Windows 安装完成后会自动部署 `lpss_tool.exe` 与 `lpss_viz.exe`。
 
 ---
 
