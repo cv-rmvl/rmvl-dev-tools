@@ -5,7 +5,7 @@ param(
 )
 
 function Show-Usage {
-    Write-Host "${CBold}用法:${CReset} ${CCyan}rdt git${CReset} ${CDim}[help | commit | squash | reword | newbr]${CReset}"
+    Write-Host "${CBold}用法:${CReset} ${CCyan}rdt git${CReset} ${CDim}[help | commit | squash | reword | newbr | update]${CReset}"
     Write-Host ''
     Write-Host "${CBold}命令:${CReset}"
     Write-Host "  ${CCyan}help${CReset}     ${CDim}显示此帮助信息${CReset}"
@@ -13,6 +13,7 @@ function Show-Usage {
     Write-Host "  ${CCyan}squash${CReset}   ${CDim}创建临时提交并压缩至上一个提交${CReset}"
     Write-Host "  ${CCyan}reword${CReset}   ${CDim}修改上一个提交的消息（不修改提交内容）${CReset}"
     Write-Host "  ${CCyan}newbr${CReset}    ${CDim}创建新分支并应用提交${CReset}"
+    Write-Host "  ${CCyan}update${CReset}   ${CDim}适用于 RMVL 的更新组合拳，将从 upstream 更新本地仓库，并推送至 origin${CReset}"
 }
 
 function Test-GitCommand {
@@ -240,6 +241,39 @@ function Invoke-NewBranchWorkflow {
     Write-Success '新分支提交完成'
 }
 
+function Invoke-UpdateWorkflow {
+    if ([string]::IsNullOrWhiteSpace($env:RMVL_ROOT_)) {
+        throw '未设置 RMVL_ROOT_ 环境变量，无法执行更新'
+    }
+    Set-Location -LiteralPath $env:RMVL_ROOT_
+
+    Initialize-RdtUi -Interactive
+    Show-RdtHeader '适用于 RMVL 的更新组合拳，依次执行以下操作：'
+    Write-RdtBlank
+    Write-RdtInfo '  git checkout 2.x'
+    Write-RdtInfo '  git pull upstream 2.x'
+    Write-RdtInfo '  git push origin 2.x'
+    Write-RdtInfo '  git checkout master'
+    Write-RdtInfo '  git reset --hard 2.x'
+    Write-RdtInfo '  git push origin master'
+    Write-RdtInfo '  git push upstream master'
+    Write-RdtBlank
+    $confirmed = Select-RdtBinary -Prompt '确认执行更新？' -LeftLabel '执行' -RightLabel '取消' -LeftValue 'yes' -RightValue 'no'
+    if ($confirmed -ne 'yes') {
+        throw '操作取消'
+    }
+
+    Write-RdtBlank
+    Invoke-External git checkout '2.x'
+    Invoke-External git pull upstream '2.x'
+    Invoke-External git push origin '2.x'
+    Invoke-External git checkout master
+    Invoke-External git reset --hard '2.x'
+    Invoke-External git push origin master
+    Invoke-External git push upstream master
+    Write-Success '更新完成'
+}
+
 if ($Arguments.Count -eq 0 -or $Arguments[0] -eq 'help') {
     Show-Usage
     if ($Arguments.Count -eq 0) { throw 'git 需要一个命令。' }
@@ -252,6 +286,7 @@ try {
         'squash' { Invoke-SquashWorkflow }
         'reword' { Invoke-RewordWorkflow }
         'newbr' { Invoke-NewBranchWorkflow }
+        'update' { Invoke-UpdateWorkflow }
         default { Show-Usage; throw "未知 git 命令: $($Arguments[0])" }
     }
     Close-RdtUi

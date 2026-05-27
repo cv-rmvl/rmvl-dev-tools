@@ -7,13 +7,14 @@ source "$TOOLS_ROOT/setup/bash/rdtui.bash"
 rdtui_init
 
 function usage() {
-  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt git${C_RESET} ${C_DIM}[help | commit | squash | reword | newbr]${C_RESET}\n"
+  echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}rdt git${C_RESET} ${C_DIM}[help | commit | squash | reword | newbr | update]${C_RESET}\n"
   echo -e "${C_BOLD}命令:${C_RESET}"
   echo -e "  ${C_CYAN}help${C_RESET}     ${C_DIM}显示此帮助信息${C_RESET}"
   echo -e "  ${C_CYAN}commit${C_RESET}   ${C_DIM}执行 '${C_ITALIC}git add . && git commit${C_RESET}${C_DIM}' 提交本地的更改${C_RESET}"
   echo -e "  ${C_CYAN}squash${C_RESET}   ${C_DIM}创建临时提交并压缩至上一个提交${C_RESET}"
   echo -e "  ${C_CYAN}reword${C_RESET}   ${C_DIM}修改上一个提交的消息（不修改提交内容）${C_RESET}"
   echo -e "  ${C_CYAN}newbr${C_RESET}    ${C_DIM}创建新分支并应用提交${C_RESET}"
+  echo -e "  ${C_CYAN}update${C_RESET}   ${C_DIM}适用于 RMVL 的更新组合拳，将从 upstream 更新本地仓库，并推送至 origin${C_RESET}"
 }
 
 function ui_dim_output() {
@@ -354,6 +355,70 @@ function git_newbr() {
   ui_close
 }
 
+function git_update() {
+  if [ -z "$RMVL_ROOT_" ]; then
+    log_error "未设置 RMVL_ROOT_ 环境变量，无法执行更新"
+    exit 1
+  fi
+  cd $RMVL_ROOT_
+
+  UI_MODE=1
+
+  ui_header "适用于 RMVL 的更新组合拳，依次执行以下操作："
+  ui_blank
+  ui_info "  git checkout 2.x"
+  ui_info "  git pull upstream 2.x"
+  ui_info "  git push origin 2.x"
+  ui_info "  git checkout master"
+  ui_info "  git reset --hard 2.x"
+  ui_info "  git remote prune origin"
+  ui_info "  git push origin master"
+  ui_info "  git push upstream master"
+  ui_blank
+  ui_select_lr confirm "确认执行更新？" "执行" "取消" "yes" "no" 0
+  if [ "$confirm" != "yes" ]; then
+    ui_fail_footer "操作取消"
+    return 130
+  else
+    ui_blank
+    if ! run_cmd git checkout 2.x; then
+      ui_fail_footer "切换到 2.x 分支失败"
+      return 1
+    fi
+    if ! run_cmd git pull upstream 2.x; then
+      ui_fail_footer "从 upstream 拉取 2.x 分支失败"
+      return 1
+    fi
+    if ! run_cmd git push origin 2.x; then
+      ui_fail_footer "推送 2.x 分支到 origin 失败"
+      return 1
+    fi
+    if ! run_cmd git checkout master; then
+      ui_fail_footer "切换到 master 分支失败"
+      return 1
+    fi
+    if ! run_cmd git reset --hard 2.x; then
+      ui_fail_footer "重置 master 分支到 2.x 失败"
+      return 1
+    fi
+    if ! run_cmd git remote prune origin; then
+      ui_fail_footer "清理远程跟踪分支失败"
+      return 1
+    fi
+    if ! run_cmd git push origin master; then
+      ui_fail_footer "推送 master 分支到 origin 失败"
+      return 1
+    fi
+    if ! run_cmd git push upstream master; then
+      ui_fail_footer "推送 master 分支到 upstream 失败"
+      return 1
+    fi
+
+    log_success "更新完成"
+    ui_close
+  fi
+}
+
 mode=$1
 
 case "$mode" in
@@ -371,6 +436,9 @@ case "$mode" in
     ;;
   newbr)
     git_newbr
+    ;;
+  update)
+    git_update
     ;;
   *)
     usage

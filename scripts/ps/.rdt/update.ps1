@@ -60,7 +60,8 @@ switch ($Arguments[0]) {
         Push-Location $ToolsRoot
         try {
             Invoke-External git checkout master
-            Invoke-External git pull origin master
+            Invoke-External git fetch
+            Invoke-External git reset --hard origin/master
             & (Join-Path $ToolsRoot 'setup/ps/install.ps1') -RootPath $env:RMVL_ROOT_ -InstallPrefix $env:RDT_RMVL_PREFIX
         } finally {
             Pop-Location

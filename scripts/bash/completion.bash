@@ -40,7 +40,7 @@ function _rdt_completion() {
       return 0
       ;;
     git)
-      local git_opts="help commit squash reword newbr"
+      local git_opts="help commit squash reword newbr update"
       COMPREPLY=( $(compgen -W "${git_opts}" -- ${cur}) )
       return 0
       ;;

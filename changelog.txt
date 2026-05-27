@@ -1,4 +1,4 @@
-1.0.1-251231
+1.0.0-251231
 
 - 首次更新，提供 rmvl 工具
 
@@ -7,103 +7,103 @@
 - 更新 update tool 的 git 更新语法，改为强制更新至 origin/master
 - 执行安装时如果输入为空，则自动 clone rmvl
 
-1.0.1-260104
+1.0.2-260104
 
 - 修复 dev 未绑定变量
 - 为所有命令增加 help 子命令
 
-1.0.1-260115
+1.0.3-260115
 
 - 更新 dev 子命令
 
-1.0.1-260116
+1.0.4-260116
 
 - RMVL_ROOT 改为 RMVL_ROOT_
 - 新增 remove 命令及其子命令 lib 和 tool
 
-1.0.2-260209
+1.0.5-260209
 
 - 初步增加 LPSS 支持
 
-1.0.2-260212
+1.0.6-260212
 
 - 修改 rmvl update code 强制更新的分支 origin/master 为 origin/2.x
 - 更新安装脚本，make install 安装时自动下载最新的 rmvl
 - 增加 changelog，可通过使用 rmvl version log 展示
 
-1.0.2-260220
+1.0.7-260220
 
 - 完成 lpss 话题、节点命令行工具的开发
 - update tool 时将自动执行 update code 步骤
 - 增加 SSH 环境下的支持
 - rmvl update lib 增加 debug 和 release 两个选项
 
-1.0.3-260223
+1.0.8-260223
 
 - lpss topic 增加 type、echo、hz 和 bw 子命令
 
-1.0.3-260224
+1.0.9-260224
 
 - lpss echo 输出采用 nlohmann::json 格式化输出
 
-1.0.4-260301
+1.0.10-260301
 
 - 增加 LViz 工具，目前暂不支持 RoboModel 工具
 
-1.0.4-260302
+1.0.11-260302
 
 - 增加 lpss interface 命令，用于查看内置消息接口的定义
 - LViz 工具增加对 geometry/twist 的支持，暂不支持 RobotModel 工具
 
-1.0.4-260303
+1.0.12-260303
 
 - LViz 增加无状态支持，允许存在多个 LViz 前端实例，共享数据的同时互不干扰
 
-1.0.4-260310
+1.0.13-260310
 
 - rmvl remove lib 将自动删除文档
 - lpss topic echo 支持 TF 和 URDF 的消息输出
 - LViz 增加对 RobotModel 工具的支持
 
-1.0.4-260312
+1.0.14-260312
 
 - LViz 支持同时显示 TF 和 RobotModel
 
-1.0.5-260320
+1.0.15-260320
 
 - LViz 增加 Trajectory 支持
 - lpss topic echo 支持 JointTrajectory 消息的输出
 
-1.0.5-260325
+1.0.16-260325
 
 - LViz 调整渲染的光源阵列
 
-1.0.5-260411
+1.0.17-260411
 
 - 增加 lpss create 功能
 
-1.0.6-260507
+1.0.18-260507
 
 - 适配最新 LPSS 的 JSON 序列化功能
 
-1.0.6-260510
+1.0.19-260510
 
 - 修改帮助信息
 - 无 OpenCV 支持的环境下，LViz 将不再支持 Image 消息的显示和相关接口的调用
 - 增加异常退出的 cleanup 处理
 
-1.0.6-260511
+1.0.20-260511
 
 - 移除 zenity 支持，统一改为 rdtui 进行交互
 - 增加输出为管道的支持，允许在脚本中启用交互式输入输出
 - 统一所有输出格式，增加颜色和样式以提升可读性
 
-1.0.6-260514
+1.0.21-260514
 
 - 增加自动下载 rmvl 可选依赖的功能
 - 修复了老版 rdt 通过 update tool 升级时 SUDO 权限不足导致的安装失败问题
 
-1.0.6-260516
+1.0.22-260516
 
 - LViz 增加面板、帮助选项
 
@@ -112,13 +112,18 @@
 - rmvl 工具正式更名为 rdt，旧 rmvl 入口保留但仅用于提示弃用
 - 增加 rdt git 工具，包含 commit、squash、reword、newbr 子命令
 
-1.1.0-260524
+1.1.1-260524
 
 - 优化 rdt remove 的输出样式
 
-1.1.1-260525
+1.2.0-260525
 
 - 增加 Windows 原生 PowerShell 入口、安装、卸载与命令补全脚本，将自动补全加入用户 PROFILE，并为 Windows 用户在根目录增加 bat 快捷入口
 - 修复 LViz 异步接口与无 OpenCV 构建的兼容问题
 - 修复 Windows 下 `lpss_tool` 引用 Unix 头文件导致的构建失败
 - 脚本按 `bash`、`ps` 分目录管理，并保留旧版升级所需的安装桥接入口
+
+1.2.1-260526
+
+- 增加 rdt git update 子命令
+- 更新 rdt update tool 的 git 更新逻辑，改为强制更新

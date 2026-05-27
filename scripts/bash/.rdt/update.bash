@@ -74,7 +74,8 @@ function update_tool() {
   bash $project_dir/setup/bash/uninstall.bash
   cd $project_dir
   git checkout master
-  git pull origin master
+  git fetch origin
+  git reset --hard origin/master
   bash $project_dir/setup/bash/install.bash "$root_path"
   source "$HOME/.bashrc"
   echo -e "${C_GREEN}rmvl-dev-tools 工具已更新到最新版本。${C_RESET}"

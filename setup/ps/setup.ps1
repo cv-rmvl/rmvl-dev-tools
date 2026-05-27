@@ -15,7 +15,7 @@ Register-ArgumentCompleter -Native -CommandName rdt -ScriptBlock {
             switch ($elements[1]) {
                 'update' { @('help', 'tool', 'code', 'lib', 'all') }
                 'dev' { @('help', 'code', 'nvim', 'dir') }
-                'git' { @('help', 'commit', 'squash', 'reword', 'newbr') }
+                'git' { @('help', 'commit', 'squash', 'reword', 'newbr', 'update') }
                 'remove' { @('help', 'tool', 'lib') }
                 'version' { @('log') }
                 default { @() }
