@@ -1,3 +1,4 @@
 #!/bin/bash
 
-lpss viz
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.lpss"
+bash "$script_dir/viz.bash" "$@"

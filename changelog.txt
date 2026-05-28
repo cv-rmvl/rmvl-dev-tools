@@ -127,3 +127,8 @@
 
 - 增加 rdt git update 子命令
 - 更新 rdt update tool 的 git 更新逻辑，改为强制更新
+
+1.2.2-260527
+
+- 更新行尾序列
+- 修复 Linux 下无 uuidgen 导致 lviz 运行出错的问题
