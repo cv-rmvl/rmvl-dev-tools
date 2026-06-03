@@ -177,6 +177,7 @@ function git_commit() {
 
 function git_squash() {
   local confirm=""
+  local force_push=""
   local previous_build_output="${build_output:-quiet}"
   local last_commit=""
   local tmp_message="rdt squash temporary commit"
@@ -199,12 +200,19 @@ function git_squash() {
   printf "%s\n" "  git add ." | ui_dim_output
   printf "%s\n" "  git commit -m \"$tmp_message\"" | ui_dim_output
   printf "%s\n" "  git reset --soft HEAD~1" | ui_dim_output
-  printf "%s\n\n" "  git commit --amend --no-edit" | ui_dim_output
+  printf "%s\n" "  git commit --amend --no-edit" | ui_dim_output
+  ui_blank
 
   ui_select_lr confirm "确认压缩？" "执行" "取消" "yes" "no" 0
   if [ "$confirm" != "yes" ]; then
     ui_fail_footer "操作取消"
     return 130
+  fi
+  ui_select_lr force_push "压缩完成后是否强制推送当前分支？" "推送" "取消" "yes" "no" 1
+  if [ "$force_push" = "yes" ]; then
+    ui_blank
+    ui_info "压缩完成后将执行:"
+    printf "%s\n" "  git push --force-with-lease" | ui_dim_output
   fi
 
   ui_blank
@@ -237,6 +245,14 @@ function git_squash() {
     build_output="$previous_build_output"
     ui_fail_footer "git commit --amend 失败，更改已暂存，请手动处理"
     return 1
+  fi
+
+  if [ "$force_push" = "yes" ]; then
+    if ! run_cmd git push --force-with-lease; then
+      build_output="$previous_build_output"
+      ui_fail_footer "git push --force-with-lease 失败"
+      return 1
+    fi
   fi
 
   build_output="$previous_build_output"

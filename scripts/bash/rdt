@@ -51,7 +51,7 @@ case "$command" in
     usage
     echo -e "\n此工具支持的根命令有: ${C_YELLOW}rdt${C_RESET}、${C_YELLOW}lpss${C_RESET} 和 ${C_YELLOW}lviz${C_RESET}，更多信息请参考官方手册:"
     echo -e "  用户手册: ${C_GREEN}https://cv-rmvl.github.io/${C_RESET}"
-    echo -e "  API 文档: ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/${C_RESET}"
+    echo -e "  Doxygen:  ${C_GREEN}https://cv-rmvl.github.io/docs/2.x/${C_RESET}"
     echo -e "  GitHub:   ${C_GREEN}https://github.com/cv-rmvl/rmvl${C_RESET}"
     ;;
   create)

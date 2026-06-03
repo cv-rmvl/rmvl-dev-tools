@@ -11,5 +11,5 @@ Show-RdtUsage
 Write-Host ''
 Write-Host "此工具支持的根命令有: ${CYellow}rdt${CReset}、${CYellow}lpss${CReset} 和 ${CYellow}lviz${CReset}，更多信息请参考官方手册:"
 Write-Host "  用户手册: ${CGreen}https://cv-rmvl.github.io/${CReset}"
-Write-Host "  API 文档: ${CGreen}https://cv-rmvl.github.io/docs/2.x/${CReset}"
+Write-Host "  Doxygen:  ${CGreen}https://cv-rmvl.github.io/docs/2.x/${CReset}"
 Write-Host "  GitHub:   ${CGreen}https://github.com/cv-rmvl/rmvl${CReset}"

@@ -163,6 +163,12 @@ function Invoke-SquashWorkflow {
     Write-DimOutput @('  git add .', "  git commit -m `"$temporaryMessage`"", '  git reset --soft HEAD~1', '  git commit --amend --no-edit')
     $confirmed = Select-RdtBinary -Prompt '确认压缩？' -LeftLabel '执行' -RightLabel '取消' -LeftValue 'yes' -RightValue 'no'
     if ($confirmed -ne 'yes') { throw '操作取消' }
+    $forcePush = Select-RdtBinary -Prompt '压缩完成后是否强制推送当前分支？' -LeftLabel '推送' -RightLabel '取消' -LeftValue 'yes' -RightValue 'no' -DefaultIndex 1
+    if ($forcePush -eq 'yes') {
+        Write-RdtBlank
+        Write-RdtInfo '压缩完成后将执行:'
+        Write-DimOutput @('  git push --force-with-lease')
+    }
 
     Write-RdtBlank
     Set-RdtBuildOutput -Value 'verbose'
@@ -173,6 +179,9 @@ function Invoke-SquashWorkflow {
     Invoke-External git commit -m $temporaryMessage
     Invoke-External git reset --soft 'HEAD~1'
     Invoke-External git commit --amend --no-edit
+    if ($forcePush -eq 'yes') {
+        Invoke-External git push --force-with-lease
+    }
     Write-Success '已压缩到上一个提交'
 }
 
