@@ -136,3 +136,5 @@
 1.2.3-260603
 
 - rdt git 子命令为 squash 增加强制推送的选项，默认为不推送
+- lpss create 子命令生成的 CMakeLists.txt 模板中移除 CMAKE_CXX_STANDARD 的设置
+- 增加 bat 脚本的安装和卸载完成提示

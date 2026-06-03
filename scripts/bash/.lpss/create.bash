@@ -133,9 +133,6 @@ EOF
   echo
   echo "project(${project_name} LANGUAGES CXX)"
   echo
-  echo "set(CMAKE_CXX_STANDARD ${cpp_std})"
-  echo "set(CMAKE_CXX_STANDARD_REQUIRED ON)"
-  echo
   echo "find_package(RMVL REQUIRED)"
   echo
   echo "rmvl_add_exe("

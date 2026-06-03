@@ -98,9 +98,6 @@ $cmakeLines = @(
     ''
     "project($ProjectName LANGUAGES CXX)"
     ''
-    "set(CMAKE_CXX_STANDARD $cppStandard)"
-    'set(CMAKE_CXX_STANDARD_REQUIRED ON)'
-    ''
     'find_package(RMVL REQUIRED)'
     ''
     'rmvl_add_exe('
