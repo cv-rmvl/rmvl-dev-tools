@@ -346,8 +346,9 @@ function Select-RdtMultiple {
         }
         for ($i = 0; $i -lt $Options.Count; $i++) {
             $mark = if ($selected[$i]) { '■' } else { '□' }
-            $color = if ($i -eq $cursor) { $script:CCyan } elseif ($selected[$i]) { $script:CGreen } else { $script:CDim }
-            Write-RdtLine "${color}${mark} $($Options[$i].Label)${script:CReset}${script:CClear}"
+            $markColor = if ($selected[$i]) { $script:CGreen } elseif ($i -eq $cursor) { $script:CCyan } else { $script:CDim }
+            $labelColor = if ($i -eq $cursor) { '' } else { $script:CDim }
+            Write-RdtLine "${markColor}${mark}${script:CReset} ${labelColor}$($Options[$i].Label)${script:CReset}${script:CClear}"
         }
         Write-RdtFrameBottom
         $rendered = $true

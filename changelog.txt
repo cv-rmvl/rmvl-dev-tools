@@ -109,7 +109,7 @@
 
 1.1.0-260520
 
-- rmvl 工具正式更名为 rdt，旧 rmvl 入口保留但仅用于提示弃用
+- {{ rmvl 工具正式更名为 rdt }}，旧 rmvl 入口保留但仅用于提示弃用
 - 增加 rdt git 工具，包含 commit、squash、reword、newbr 子命令
 
 1.1.1-260524
@@ -138,3 +138,11 @@
 - rdt git 子命令为 squash 增加强制推送的选项，默认为不推送
 - lpss create 子命令生成的 CMakeLists.txt 模板中移除 CMAKE_CXX_STANDARD 的设置
 - 增加 bat 脚本的安装和卸载完成提示
+
+1.2.4-260626
+
+- rdt version log 支持高亮显示
+- LViz: {{ 1.0.0 => 1.0.1 }}
+  - 后端应用改为由 HttpServer 提供
+  - 修改 URDF 提示信息
+- Linux 增加 OpenSSL 安装支持，Windows 增加 Eigen3 安装支持

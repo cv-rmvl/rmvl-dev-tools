@@ -402,13 +402,13 @@ ui_select_multi() {
       local line
       if [ "$i" -eq "$cursor" ]; then
         if [ "${selected[i]}" -eq 1 ]; then
-          line="${C_CYAN}${C_GREEN}\u25fc${C_RESET}${C_RESET} ${labels[i]}"
+          line="${C_GREEN}\u25fc${C_RESET} ${labels[i]}"
         else
           line="${C_CYAN}\u25fb${C_RESET} ${labels[i]}"
         fi
       else
         if [ "${selected[i]}" -eq 1 ]; then
-          line="${C_DIM}${C_GREEN}\u25fc${C_RESET} ${labels[i]}${C_RESET}"
+          line="${C_GREEN}\u25fc${C_RESET} ${C_DIM}${labels[i]}${C_RESET}"
         else
           line="${C_DIM}\u25fb ${labels[i]}${C_RESET}"
         fi

@@ -117,9 +117,8 @@ try {
         } else {
             $RootPath = Join-Path (Split-Path -Parent $ToolsRoot) 'rmvl'
             $OptionalDeps = Select-RdtMultiple -Prompt '请选择可选的依赖项' -Options @(
-                @{ Label = 'OpenCV'; Value = 'opencv' },
                 @{ Label = 'Eigen 3'; Value = 'eigen3' },
-                @{ Label = 'open62541（由 CMake 管理安装进程）'; Value = 'open62541' }
+                @{ Label = 'open62541'; Value = 'open62541' }
             )
         }
 
@@ -164,10 +163,10 @@ try {
     [Environment]::SetEnvironmentVariable('RDT_RMVL_PREFIX', $InstallPrefix, 'User')
     $configurationModified = $true
 
-    if ($OptionalDeps -contains 'opencv' -or $OptionalDeps -contains 'eigen3') {
-        Write-RdtWarning 'Windows 不自动安装 OpenCV/Eigen，请确保对应 CMake 包已可被当前工具链找到。'
-    }
     $extraArguments = @()
+    if ($OptionalDeps -contains 'eigen3') {
+        $extraArguments += '-DBUILD_EIGEN3=ON'
+    }
     if ($OptionalDeps -contains 'open62541') {
         $extraArguments += '-DBUILD_OPEN62541=ON'
     }

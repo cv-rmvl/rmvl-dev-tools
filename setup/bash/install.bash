@@ -113,7 +113,8 @@ if [ "$NON_INTERACTIVE" -eq 0 ]; then
     ui_select_multi optional_deps "请选择可选的依赖项" \
       "OpenCV" "opencv" \
       "Eigen 3" "eigen3" \
-      "open62541（由 CMake 管理安装进程）" "open62541"
+      "open62541" "open62541" \
+      "OpenSSL" "openssl"
   fi
 
   ui_blank
@@ -274,6 +275,9 @@ fi
 if [[ " $optional_deps " == *" open62541 "* ]]; then
   rmvl_cmake_extra_args+=("-DBUILD_OPEN62541=ON")
 fi
+if [[ " $optional_deps " == *" openssl "* ]]; then
+  optional_packages+=("libssl-dev")
+fi
 
 if [ ${#optional_packages[@]} -gt 0 ]; then
   log_info "正在安装可选依赖: ${optional_packages[*]}"
@@ -282,7 +286,10 @@ if [ ${#optional_packages[@]} -gt 0 ]; then
   log_success "依赖安装完成"
 fi
 
-log_info "正在自动构建 rmvl..."
+if [ ${#rmvl_cmake_extra_args[@]} -gt 0 ]; then
+  extra_cmake_info="，并配置额外 CMake 选项: ${rmvl_cmake_extra_args[*]}"
+fi
+log_info "正在自动构建 rmvl$extra_cmake_info..."
 cur_dir="$(pwd)"
 build_ws=$cur_dir/.rmvltmp/rmvl/build
 TMP_DIRS+=("$cur_dir/.rmvltmp")

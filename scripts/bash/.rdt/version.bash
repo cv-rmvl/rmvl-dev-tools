@@ -16,7 +16,10 @@ fi
 if [ "${1:-}" = "log" ]; then
   echo -e "${C_BOLD}当前版本:${C_RESET} $cur_version\n"
   echo -e "${C_BOLD}详细更新日志${C_RESET}\n"
-  cat "$project_dir/changelog.txt" | sed -E "s/(.*[0-9]+\.[0-9]+\.[0-9]+-[0-9]{6}.*)/${C_YELLOW}\1${C_RESET}/"
+  sed -E \
+    -e "s/(.*[0-9]+\.[0-9]+\.[0-9]+-[0-9]{6}.*)/${C_YELLOW}\1${C_RESET}/" \
+    -e "s/\\{\\{[[:space:]]*([^{}]*[^{}[:space:]])[[:space:]]*\\}\\}/${C_GREEN}${C_BOLD}\1${C_RESET}/g" \
+    "$project_dir/changelog.txt"
 else
   echo "$cur_version"
 fi
