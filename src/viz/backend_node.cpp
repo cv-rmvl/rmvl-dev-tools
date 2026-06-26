@@ -12,6 +12,7 @@
 #include <fmt/ranges.h>
 
 #include <rmvl/core/timer.hpp>
+#include <rmvl/io/netapp.hpp>
 
 #include "backend_node.hpp"
 #include "path_config.hpp"
@@ -52,10 +53,10 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
     LVIZ_REQUEST_REGISTER(trajectory);
     LVIZ_REQUEST_REGISTER(robotmodel);
 
-    app.listen(PORT, []() {
+    server.listen(PORT, []() {
         auto duration = rm::Time::now_us() - gtime;
         fmt::println("  \033[32;1mLViz\033[0m \033[32mv{}\033[0m \033[2m ready in\033[0m \033[1m{}\033[0m ms\n", LVIZ_VERSION, duration / 1000.0);
-        fmt::println("  \033[32m\u279c\033[0m  \033[1mLocal\033[0m:   \033[36mhttp://localhost:{}/\033[0m", PORT);
+        fmt::println("  \033[32m\u279c\033[0m  \033[1mLocal\033[0m:   \033[36mhttp://localhost:{}\033[0m", PORT);
         auto ifaces = NetworkInterface::list();
         for (const auto &iface : ifaces)
             if (iface.up() && !iface.loopback())
@@ -64,7 +65,7 @@ BackendNode::BackendNode(std::string_view name) : lpss::async::Node(name) {
         fmt::println("  \033[32;2m\u279c\033[0m  \033[2mPress\033[0m \033[1mctrl(\u2303) + c\033[0m \033[2mto stop this node\033[0m\n");
     });
 
-    co_spawn(_ctx, &async::Webapp::spinWithoutSigint, &app);
+    co_spawn(_ctx, &async::HttpServer::spinWithoutSigint, &server);
 }
 
 } // namespace lviz

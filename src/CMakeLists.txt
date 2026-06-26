@@ -26,5 +26,5 @@ rmvl_add_exe(
 )
 
 target_compile_definitions(
-  lpss_viz PRIVATE LVIZ_VERSION="1.0.0"
+  lpss_viz PRIVATE LVIZ_VERSION="1.0.1"
 )

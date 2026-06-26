@@ -39,6 +39,7 @@ private:
     void get_mesh(const rm::Request &req, rm::Response &res);
 
     rm::async::Webapp app{_ctx};
+    rm::async::HttpServer server{app};
 
     // Point: geometry/Point
     LVIZ_MANAGE_REGISTER(point, Point, rm::msg::Point);
