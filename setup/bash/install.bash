@@ -174,7 +174,13 @@ else
     log_warn "检测到 rmvl 已存在，跳过克隆"
   else
     log_info "正在克隆 rmvl 项目到 $root_path..."
-    run_cmd git clone https://github.com/cv-rmvl/rmvl.git "$root_path"
+    if ! run_cmd git clone https://github.com/cv-rmvl/rmvl.git "$root_path"; then
+      log_warn "GitHub 克隆失败，正在切换至 GitCode 源..."
+      if [ -d "$root_path" ]; then
+        rm -rf "$root_path"
+      fi
+      run_cmd git clone https://gitcode.com/m0_51586788/rmvl.git "$root_path"
+    fi
   fi
 fi
 
@@ -245,6 +251,7 @@ fi
 
 rmvl_cmake_extra_args=()
 optional_packages=()
+extra_cmake_info=""
 
 detect_rmvl_cxx_standard() {
   local build_dir="$1"

@@ -146,3 +146,7 @@
   - 后端应用改为由 HttpServer 提供
   - 修改 URDF 提示信息
 - Linux 增加 OpenSSL 安装支持，Windows 增加 Eigen3 安装支持
+
+1.2.5-260630
+
+- 执行下载操作时，在网络情况不佳时自动换源

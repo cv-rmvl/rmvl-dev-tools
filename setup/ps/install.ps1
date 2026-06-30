@@ -149,7 +149,16 @@ try {
         } else {
             Write-RdtInfo "正在克隆 rmvl 项目到 $RootPath..."
             $cloneArguments = @('clone', 'https://github.com/cv-rmvl/rmvl.git', $RootPath)
-            Invoke-RdtCommand git @cloneArguments
+            try {
+                Invoke-RdtCommand git @cloneArguments
+            } catch {
+                Write-RdtWarning 'GitHub 克隆失败，正在切换至 GitCode 源...'
+                if (Test-Path -LiteralPath $RootPath -PathType Container) {
+                    Remove-Item -LiteralPath $RootPath -Recurse -Force
+                }
+                $cloneArguments = @('clone', 'https://gitcode.com/m0_51586788/rmvl.git', $RootPath)
+                Invoke-RdtCommand git @cloneArguments
+            }
         }
     } elseif (-not (Test-Path -LiteralPath $RootPath -PathType Container)) {
         throw "rmvl 路径不存在: $RootPath"
