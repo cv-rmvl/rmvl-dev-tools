@@ -9,6 +9,7 @@ function Show-LpssUsage {
     Write-Host "  ${CCyan}create      ${CDim}创建一个依赖 lpss 的新项目${CReset}"
     Write-Host "  ${CCyan}node        ${CDim}节点 CLI 工具${CReset}"
     Write-Host "  ${CCyan}topic       ${CDim}话题 CLI 工具${CReset}"
+    Write-Host "  ${CCyan}service     ${CDim}服务 CLI 工具${CReset}"
     Write-Host "  ${CCyan}interface   ${CDim}内置消息接口查看工具${CReset}"
     Write-Host "  ${CCyan}graph       ${CDim}节点图工具${CReset}"
     Write-Host "  ${CCyan}viz         ${CDim}3D 可视化工具 LViz${CReset}"

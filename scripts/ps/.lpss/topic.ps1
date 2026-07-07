@@ -8,11 +8,12 @@ param(
 )
 
 function Show-TopicUsage {
-    Write-Host "${CBold}用法:${CReset} ${CCyan}lpss topic${CReset} ${CDim}[help | info | list | echo | pub | type | hz | bw]${CReset}"
+    Write-Host "${CBold}用法:${CReset} ${CCyan}lpss topic${CReset} ${CDim}[help | info | list | find | echo | pub | type | hz | bw]${CReset}"
     Write-Host "${CBold}命令:${CReset}"
     Write-Host "  ${CCyan}help${CReset}   ${CDim}显示此帮助信息${CReset}"
     Write-Host "  ${CCyan}info${CReset}   ${CDim}显示话题信息${CReset}"
-    Write-Host "  ${CCyan}list${CReset}   ${CDim}列出所有话题${CReset}"
+    Write-Host "  ${CCyan}list${CReset}   ${CDim}列出所有话题，-c 仅显示数量${CReset}"
+    Write-Host "  ${CCyan}find${CReset}   ${CDim}按消息类型查找话题，-c 仅显示数量${CReset}"
     Write-Host "  ${CCyan}echo${CReset}   ${CDim}显示话题内容${CReset}"
     Write-Host "  ${CCyan}pub${CReset}    ${CDim}发布话题${CReset}"
     Write-Host "  ${CCyan}type${CReset}   ${CDim}显示话题类型${CReset}"
@@ -33,8 +34,16 @@ function Invoke-TopicWithName {
 
 switch ($Command) {
     'help' { Show-TopicUsage }
-    'list' { Invoke-LpssBinary -Name tool -Arguments @('tl') }
+    'list' { Invoke-LpssBinary -Name tool -Arguments (@('tl') + $Arguments) }
     'info' { Invoke-TopicWithName -NativeCommand 'ti' -Label 'info' }
+    'find' {
+        if ($null -eq $Arguments -or [string]::IsNullOrWhiteSpace($Arguments[0])) {
+            Write-Host "${CBold}用法:${CReset} ${CCyan}lpss topic find${CReset} ${CDim}<msg_type> [-c]${CReset}"
+            Write-Host "  ${CCyan}msg_type${CReset}   ${CDim}消息类型${CReset}"
+            throw '缺少消息类型'
+        }
+        Invoke-LpssBinary -Name tool -Arguments (@('tf') + $Arguments)
+    }
     'echo' { Invoke-TopicWithName -NativeCommand 'te' -Label 'echo' }
     'type' { Invoke-TopicWithName -NativeCommand 'tt' -Label 'type' }
     'hz' { Invoke-TopicWithName -NativeCommand 'thz' -Label 'hz' }

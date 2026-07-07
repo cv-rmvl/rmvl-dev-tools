@@ -36,12 +36,13 @@ Register-ArgumentCompleter -Native -CommandName lpss -ScriptBlock {
     $lpssCommand = Join-Path $scriptsDirectory 'lpss.ps1'
     $toolBinary = Join-Path $scriptsDirectory '.lpss/_autogen_lpss_tool.exe'
     $choices = switch ($elements.Count) {
-        2 { @('help', 'create', 'node', 'topic', 'interface', 'graph', 'viz') }
+        2 { @('help', 'create', 'node', 'topic', 'service', 'interface', 'graph', 'viz') }
         3 {
             switch ($elements[1]) {
                 'create' { @('--deps', '--exts', '--cpp') }
                 'node' { @('help', 'info', 'list') }
-                'topic' { @('help', 'info', 'list', 'echo', 'pub', 'type', 'hz', 'bw') }
+                'topic' { @('help', 'info', 'list', 'find', 'echo', 'pub', 'type', 'hz', 'bw') }
+                'service' { @('help', 'info', 'list', 'type', 'find', 'call') }
                 'interface' { @('help', 'list', 'group', 'groups', 'show') }
                 default { @() }
             }
@@ -60,6 +61,15 @@ Register-ArgumentCompleter -Native -CommandName lpss -ScriptBlock {
                 'topic' {
                     if ($elements[2] -in @('info', 'echo', 'type', 'hz', 'bw') -and (Test-Path -LiteralPath $toolBinary -PathType Leaf)) {
                         @(& $lpssCommand topic list 2>$null)
+                    } elseif ($elements[2] -in @('list', 'find')) {
+                        @('-c')
+                    } else { @() }
+                }
+                'service' {
+                    if ($elements[2] -in @('info', 'type', 'call') -and (Test-Path -LiteralPath $toolBinary -PathType Leaf)) {
+                        @(& $lpssCommand service list 2>$null)
+                    } elseif ($elements[2] -in @('list', 'find')) {
+                        @('-c')
                     } else { @() }
                 }
                 'interface' {
