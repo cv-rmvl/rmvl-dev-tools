@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $ToolsRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $CommandRoot = Join-Path $PSScriptRoot '.lpss'
-$Commands = @('help', 'create', 'node', 'topic', 'interface', 'graph', 'viz')
+$Commands = @('help', 'create', 'node', 'topic', 'service', 'interface', 'graph', 'viz')
 
 . (Join-Path $CommandRoot 'common.ps1')
 

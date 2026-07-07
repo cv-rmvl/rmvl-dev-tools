@@ -12,6 +12,7 @@
 #pragma once
 
 #include <any>
+#include <chrono>
 #include <functional>
 
 #include <rmvl/lpss/node.hpp>
@@ -24,12 +25,28 @@ struct topic {
     std::string msgtype{}; //!< 消息类型
 };
 
+//! 服务信息
+struct service {
+    std::string name{};     //!< 服务名称
+    std::string srvtype{};  //!< 服务类型
+    std::string reqtype{};  //!< 服务请求类型
+    std::string restype{};  //!< 服务响应类型
+};
+
+//! 服务调用结果
+struct call_result {
+    bool ok{};              //!< 是否调用成功
+    std::string response{}; //!< 响应 JSON
+    std::string error{};    //!< 错误信息
+};
+
 //! 节点信息
 struct node {
-
-    std::string name{};        //!< 节点名称
-    std::vector<topic> pubs{}; //!< 发布的话题列表
-    std::vector<topic> subs{}; //!< 订阅的话题列表
+    std::string name{};           //!< 节点名称
+    std::vector<topic> pubs{};    //!< 发布的话题列表
+    std::vector<topic> subs{};    //!< 订阅的话题列表
+    std::vector<service> srvs{};  //!< 提供的服务列表
+    std::vector<service> clis{};  //!< 调用的服务列表
 };
 
 class LpssTool : public rm::lpss::async::Node {
@@ -44,6 +61,12 @@ public:
 
     //! 获取所有已发现的话题，key 为话题名称，value 为消息类型
     std::unordered_map<std::string, std::string> topics() const;
+
+    //! 获取所有已发现的服务，key 为服务名称，value 为服务信息
+    std::unordered_map<std::string, service> services() const;
+
+    //! 调用指定服务
+    call_result call(std::string_view service, const rdt::service &info, std::string_view request, std::chrono::milliseconds timeout);
 
     //! 消息回调类型：(格式化消息 JSON)
     using EchoCallback = std::function<void(std::string_view)>;
