@@ -74,8 +74,7 @@ static void print_items(const std::vector<T> &items, bool count_only) {
 static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
     if (argv[1] == "nl"sv) {
         auto nodes = nd.nodes();
-        for (const auto &name : nodes)
-            printf("%s\n", name.c_str());
+        print_items(nodes, has_arg(argc, argv, "-c"sv));
     } else if (argv[1] == "ni"sv) {
         if (argc < 3)
             return;
@@ -200,8 +199,6 @@ static void print_info(int argc, char *argv[], rdt::LpssTool &nd) {
         }
 
         printf("Type: %s\n", service_type_display(service_info).c_str());
-        printf("Request Type: %s\n", service_info.reqtype.c_str());
-        printf("Response Type: %s\n", service_info.restype.c_str());
 
         printf("\nServer Node:\n");
         print_string_list(servers);

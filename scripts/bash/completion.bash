@@ -113,6 +113,8 @@ function _lpss_completion() {
       elif [[ $COMP_CWORD -eq 3 && "$prev" == "info" ]]; then
         local list=$(lpss $subcommand list 2>/dev/null)
         COMPREPLY=($(compgen -W "$list" -- $cur))
+      elif [[ "$prev" == "list" ]]; then
+        COMPREPLY=($(compgen -W "-c" -- $cur))
       fi
       return 0
       ;;

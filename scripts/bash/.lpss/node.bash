@@ -11,7 +11,7 @@ function usage() {
   echo -e "${C_BOLD}命令:${C_RESET}"
   echo -e "  ${C_CYAN}help${C_RESET}   ${C_DIM}显示此帮助信息${C_RESET}"
   echo -e "  ${C_CYAN}info${C_RESET}   ${C_DIM}显示节点信息${C_RESET}"
-  echo -e "  ${C_CYAN}list${C_RESET}   ${C_DIM}列出所有节点${C_RESET}"
+  echo -e "  ${C_CYAN}list${C_RESET}   ${C_DIM}列出所有节点，-c 仅显示数量${C_RESET}"
 }
 
 if [ $# -lt 1 ]; then
@@ -20,19 +20,20 @@ if [ $# -lt 1 ]; then
 fi
 
 mode=$1
+shift
 cur_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 function node_info() {
-  if [ $# -lt 2 ]; then
+  if [ $# -lt 1 ]; then
     echo -e "${C_BOLD}用法:${C_RESET} ${C_CYAN}lpss node info${C_RESET} ${C_DIM}<node_name>${C_RESET}"
     exit 1
   fi
-  node_name=$2
+  node_name=$1
   $cur_dir/_autogen_lpss_tool ni "$node_name"
 }
 
 function node_list() {
-  $cur_dir/_autogen_lpss_tool nl
+  $cur_dir/_autogen_lpss_tool nl "$@"
 }
 
 if [ ! -f "$cur_dir/_autogen_lpss_tool" ]; then
@@ -48,7 +49,7 @@ case $mode in
     node_info "$@"
     ;;
   list)
-    node_list
+    node_list "$@"
     ;;
   *)
     usage

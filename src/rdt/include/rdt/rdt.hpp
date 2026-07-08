@@ -27,10 +27,10 @@ struct topic {
 
 //! 服务信息
 struct service {
-    std::string name{};     //!< 服务名称
-    std::string srvtype{};  //!< 服务类型
-    std::string reqtype{};  //!< 服务请求类型
-    std::string restype{};  //!< 服务响应类型
+    std::string name{};    //!< 服务名称
+    std::string srvtype{}; //!< 服务类型
+    std::string reqtype{}; //!< 服务请求类型
+    std::string restype{}; //!< 服务响应类型
 };
 
 //! 服务调用结果
@@ -42,11 +42,11 @@ struct call_result {
 
 //! 节点信息
 struct node {
-    std::string name{};           //!< 节点名称
-    std::vector<topic> pubs{};    //!< 发布的话题列表
-    std::vector<topic> subs{};    //!< 订阅的话题列表
-    std::vector<service> srvs{};  //!< 提供的服务列表
-    std::vector<service> clis{};  //!< 调用的服务列表
+    std::string name{};          //!< 节点名称
+    std::vector<topic> pubs{};   //!< 发布的话题列表
+    std::vector<topic> subs{};   //!< 订阅的话题列表
+    std::vector<service> srvs{}; //!< 提供的服务列表
+    std::vector<service> clis{}; //!< 调用的服务列表
 };
 
 class LpssTool : public rm::lpss::async::Node {
