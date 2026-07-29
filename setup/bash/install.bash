@@ -66,6 +66,7 @@ ensure_bash_command_permissions() {
     "$TOOLS_ROOT/scripts/bash/rdt" \
     "$TOOLS_ROOT/scripts/bash/rmvl" \
     "$TOOLS_ROOT/scripts/bash/lpss" \
+    "$TOOLS_ROOT/scripts/bash/lgraph" \
     "$TOOLS_ROOT/scripts/bash/lviz" \
     "$TOOLS_ROOT/scripts/bash/.rdt/"*.bash \
     "$TOOLS_ROOT/scripts/bash/.lpss/"*.bash
@@ -318,7 +319,7 @@ run_cmd cmake -S "$TOOLS_ROOT/src" -B "$TOOLS_ROOT/build_tmp" "-DCMAKE_CXX_STAND
 run_cmd cmake --build "$TOOLS_ROOT/build_tmp"
 log_success "rdt 构建完成"
 
-for name in tool viz; do
+for name in tool graph viz; do
   cp "$TOOLS_ROOT/build_tmp/lpss_$name" "$TOOLS_ROOT/scripts/bash/.lpss/_autogen_lpss_$name"
   chmod u+x "$TOOLS_ROOT/scripts/bash/.lpss/_autogen_lpss_$name"
 done

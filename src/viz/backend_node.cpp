@@ -15,7 +15,7 @@
 #include <rmvl/io/netapp.hpp>
 
 #include "backend_node.hpp"
-#include "path_config.hpp"
+#include "viz/path_config.hpp"
 
 #ifndef LVIZ_VERSION
 #define LVIZ_VERSION "unknown"

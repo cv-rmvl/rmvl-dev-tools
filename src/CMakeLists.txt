@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 
 project(RMVLDevTools LANGUAGES CXX)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/viz/runtime/path_config.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/gen/path_config.hpp
-)
+foreach(m graph viz)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${m}/runtime/path_config.hpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gen/${m}/path_config.hpp
+  )
+endforeach()
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/gen)
 
@@ -27,4 +29,14 @@ rmvl_add_exe(
 
 target_compile_definitions(
   lpss_viz PRIVATE LVIZ_VERSION="1.0.1"
+)
+
+rmvl_add_exe(
+  lpss_graph
+  SOURCES graph/backend.cpp
+  DEPENDS lpss
+)
+
+target_compile_definitions(
+  lpss_graph PRIVATE LGRAPH_VERSION="1.0.0"
 )

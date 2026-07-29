@@ -66,11 +66,7 @@ case "$command" in
     "$script_dir/interface.bash" "$@"
     ;;
   graph)
-    if [ -f "$script_dir/_autogen_lpss_graph" ]; then
-      "$script_dir/_autogen_lpss_graph" "$@"
-    else
-      echo "lpss graph 工具尚未实现。敬请期待！"
-    fi
+    bash "$script_dir/graph.bash" "$@"
     ;;
   viz)
     bash "$script_dir/viz.bash" "$@"

@@ -66,7 +66,7 @@ rdt update code
 > [!tip]
 > Bash 入口支持 Tab 补全；PowerShell 安装会自动将 `setup/ps/setup.ps1` 加入用户 `PROFILE`，启用 `rdt` 与 `lpss` 的命令补全。
 >
-> Bash 与 Windows PowerShell 入口均支持 `rdt`、`lpss` 与 `lviz`。Windows 安装完成后会自动部署 `lpss_tool.exe` 与 `lpss_viz.exe`。
+> Bash 与 Windows PowerShell 入口均支持 `rdt`、`lpss`、`lgraph` 与 `lviz`。Windows 安装完成后会自动部署 `lpss_tool.exe`、`lpss_graph.exe` 与 `lpss_viz.exe`。
 
 ---
 

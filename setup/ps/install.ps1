@@ -216,9 +216,11 @@ try {
         New-Item -ItemType Directory -Path $lpssCommandDirectory -Force | Out-Null
         Copy-Item -LiteralPath (Join-Path $rdtBuild 'Release/lpss_tool.exe') `
             -Destination (Join-Path $lpssCommandDirectory '_autogen_lpss_tool.exe') -Force
+        Copy-Item -LiteralPath (Join-Path $rdtBuild 'Release/lpss_graph.exe') `
+            -Destination (Join-Path $lpssCommandDirectory '_autogen_lpss_graph.exe') -Force
         Copy-Item -LiteralPath (Join-Path $rdtBuild 'Release/lpss_viz.exe') `
             -Destination (Join-Path $lpssCommandDirectory '_autogen_lpss_viz.exe') -Force
-        Write-Success 'lpss 与 lviz 工具安装完成'
+        Write-Success 'lpss、lgraph 与 lviz 工具安装完成'
     }
 
     Enable-RdtProfileSetup -SetupScriptPath (Join-Path $PSScriptRoot 'setup.ps1') -ProfilePath $profilePath

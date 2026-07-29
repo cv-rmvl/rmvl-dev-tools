@@ -1,0 +1,15 @@
+/**
+ * @file path_config.hpp
+ * @brief lgraph 运行时路径配置
+ */
+
+#pragma once
+
+#include <string_view>
+
+namespace path {
+
+//! 前端构建产物路径，尾置 "/"
+inline constexpr std::string_view web_root = "@CMAKE_CURRENT_LIST_DIR@/graph/dist/";
+
+} // namespace path
