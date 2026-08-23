@@ -11,9 +11,13 @@
 
 #pragma once
 
+#include <memory>
+
 #include <rmvl/io/netapp.hpp>
 #include <rmvl/lpss/cv.hpp>
 #include <rmvl/lpss/node.hpp>
+#include <rmvl/lpss/transform.hpp>
+#include <rmvl/nav/map.hpp>
 
 #include <rmvlmsg/geometry/twist.hpp>
 #include <rmvlmsg/geometry/wrench.hpp>
@@ -61,13 +65,45 @@ private:
     LVIZ_MANAGE_REGISTER(marker_array, MarkerArray, rm::msg::MarkerArray);
     // Trajectory: motion/JointTrajectory
     LVIZ_MANAGE_REGISTER(trajectory, JointTrajectory, rm::msg::JointTrajectory);
+
+    // Map: nav/OccupancyGrid + nav/OccupancyGridUpdate
+    struct mapDisplay {
+        std::string map_key{};
+        std::string tf_name{};
+        std::unique_ptr<rm::lpss::tf::Buffer> tf_buffer{};
+        std::unique_ptr<rm::lpss::tf::Listener> tf_listener{};
+    };
+    std::unordered_map<std::string, std::unordered_map<std::string, mapDisplay>> _map_displays{};
+    struct mapShared {
+        rm::lpss::async::Subscriber<rm::msg::OccupancyGrid>::ptr map_sub{};
+        rm::lpss::async::Subscriber<rm::msg::OccupancyGridUpdate>::ptr update_sub{};
+        rm::nav::GridMap cache{};
+        rm::nav::MapStatus status{rm::nav::MapStatus::InvalidDimensions};
+        size_t count{0};
+        bool synchronized{false};
+    };
+    std::unordered_map<std::string, mapShared> _map_shared{};
+    void get_map(const rm::Request &req, rm::Response &res);
+    void get_map_data(const rm::Request &req, rm::Response &res);
+    void delete_map(const rm::Request &req, rm::Response &res);
+    void release_map(std::string_view key);
     
-    // RobotModel (Only TF managed here)
+    // RobotModel（URDF 为公共资源，此处管理动态与静态 TF）
     struct robotmodelDisplay {
-        std::string topic{};
+        std::string topic_tf{};
+        std::string topic_tf_static{};
     };
     std::unordered_map<std::string, std::unordered_map<std::string, robotmodelDisplay>> _robotmodel_displays{};
-    void get_robotmodel(const rm::Request &req, rm::Response &res);
+    struct robotmodelShared {
+        rm::lpss::async::Subscriber<rm::msg::TF>::ptr sub{};
+        rm::msg::TF cache{};
+        size_t count{0};
+        bool received{false};
+    };
+    std::unordered_map<std::string, robotmodelShared> _robotmodel_tf_shared{};
+    std::unordered_map<std::string, robotmodelShared> _robotmodel_tf_static_shared{};
+    void get_robotmodel_tf(const rm::Request &req, rm::Response &res);
+    void get_robotmodel_tf_static(const rm::Request &req, rm::Response &res);
     void delete_robotmodel(const rm::Request &req, rm::Response &res);
 
     // URDF (Public Resource)

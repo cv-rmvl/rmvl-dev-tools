@@ -24,11 +24,11 @@ rmvl_add_exe(
 rmvl_add_exe(
   lpss_viz
   SOURCES viz/backend_http.cpp viz/backend_node.cpp
-  DEPENDS lpss
+  DEPENDS nav
 )
 
 target_compile_definitions(
-  lpss_viz PRIVATE LVIZ_VERSION="1.0.1"
+  lpss_viz PRIVATE LVIZ_VERSION="1.0.2"
 )
 
 rmvl_add_exe(

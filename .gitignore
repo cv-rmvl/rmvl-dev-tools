@@ -1,3 +1,9 @@
+# AI Agent
+.claude/
+.agents/
+.codex/
+
+# Build
 build
 .cache
 .vscode/
