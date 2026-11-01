@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
     std::jthread spin_thread([&nd]() {
         nd.spin();
     });
-    std::this_thread::sleep_for(50ms);
+    std::this_thread::sleep_for(500ms);
     print_info(argc, argv, nd);
     nd.shutdown();
 }
